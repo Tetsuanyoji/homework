@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>早稲アカ 宿題トラッカー</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#2563eb;--accent-bg:#eff6ff;--accent-border:#93c5fd;
+  --success:#16a34a;--success-bg:#f0fdf4;--success-border:#86efac;
+  --danger:#dc2626;--danger-bg:#fef2f2;--danger-border:#fca5a5;
+  --warning:#d97706;--warning-bg:#fffbeb;
+  --surface:#ffffff;--surface1:#f8fafc;--surface2:#f1f5f9;
+  --border:#e2e8f0;--border-strong:#cbd5e1;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --radius:10px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:#f1f5f9;color:var(--text);font-size:15px}
+.app{max-width:480px;margin:0 auto;background:var(--surface1);min-height:100vh;padding-bottom:80px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.header h1{font-size:16px;font-weight:600;display:flex;align-items:center;gap:6px}
+.view-toggle{display:flex;background:var(--surface2);border-radius:8px;padding:3px;gap:2px}
+.view-btn{padding:5px 10px;border-radius:6px;border:none;background:none;font-size:12px;cursor:pointer;color:var(--text3);font-weight:500}
+.view-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:49px;z-index:9}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:10px 14px;font-size:12px;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
+.content{padding:12px}
+.hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;transition:border-color .15s}
+.hw-card.urgent{border-color:var(--danger-border);background:var(--danger-bg)}
+.hw-card.complete{opacity:.7}
+.card-top{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.subj{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
+.s-kokugo{background:#ede9fe;color:#5b21b6}
+.s-sansu{background:#dbeafe;color:#1d4ed8}
+.s-rika{background:#dcfce7;color:#166534}
+.s-shakai{background:#fef3c7;color:#92400e}
+.hw-name{font-size:14px;font-weight:600;flex:1;line-height:1.3}
+.due{font-size:11px;color:var(--text3);flex-shrink:0}
+.due.urgent{color:var(--danger);font-weight:600}
+.steps{display:flex;gap:6px;margin-bottom:10px}
+.step-btn{flex:1;padding:8px 2px;border:1px solid var(--border);border-radius:9px;background:var(--surface1);cursor:pointer;text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.step-btn:active{transform:scale(.95)}
+.step-btn.done{background:var(--success-bg);border-color:var(--success-border)}
+.step-btn.next{border-color:var(--accent-border);background:var(--accent-bg)}
+.step-icon{font-size:17px;display:block;margin-bottom:2px}
+.step-label{font-size:10px;color:var(--text2);font-weight:500}
+.step-btn.done .step-label{color:var(--success)}
+.step-btn.next .step-label{color:var(--accent)}
+.progress-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.bar{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.pct{font-size:11px;color:var(--text3);min-width:30px;text-align:right}
+.photo-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.thumb{width:62px;height:62px;border-radius:8px;border:1px solid var(--border);object-fit:cover;cursor:pointer}
+.photo-add{width:62px;height:62px;border-radius:8px;border:1.5px dashed var(--border-strong);background:var(--surface1);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px;-webkit-tap-highlight-color:transparent}
+.photo-add svg{width:22px;height:22px;stroke:var(--text3)}
+.photo-add span{font-size:9px;color:var(--text3)}
+.note{width:100%;font-size:12px;border:1px solid var(--border);border-radius:7px;padding:7px 9px;background:var(--surface1);color:var(--text2);resize:none;line-height:1.5;font-family:inherit}
+.note:focus{outline:none;border-color:var(--accent)}
+.fab{position:fixed;bottom:22px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,99,235,.4);z-index:100;-webkit-tap-highlight-color:transparent}
+.sheet{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:200;backdrop-filter:blur(2px)}
+.sheet-body{background:var(--surface);border-radius:18px 18px 0 0;width:100%;padding:20px 16px 36px;max-height:88vh;overflow-y:auto}
+.sheet-body h2{font-size:16px;font-weight:700;margin-bottom:16px}
+.form-field{margin-bottom:14px}
+.form-field label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;font-weight:500}
+.form-field input,.form-field select{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;font-family:inherit}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent)}
+.subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.subj-opt{padding:10px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.subj-opt.selected{border-width:2px}
+.btn-row{display:flex;gap:8px;margin-top:18px}
+.btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:active{transform:scale(.97)}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat-val{font-size:24px;font-weight:700;margin-top:2px}
+.stat-lbl{font-size:11px;color:var(--text3)}
+.empty{text-align:center;padding:48px 16px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:8px}
+.spinner{display:flex;justify-content:center;padding:40px;color:var(--text3);font-size:13px}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap}
+.toast.show{opacity:1}
+.photo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.photo-overlay img{max-width:94%;max-height:72vh;border-radius:10px}
+.photo-close{color:#fff;background:rgba(255,255,255,.15);border:none;padding:10px 24px;border-radius:20px;cursor:pointer;font-size:14px}
+.sync-indicator{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--success)}
+.sync-dot.syncing{background:var(--warning);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>📚 早稲アカ 宿題</h1>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="sync-indicator"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">同期済み</span></div>
+      <div class="view-toggle">
+        <button class="view-btn active" onclick="setView('child')" id="vbtn-child">こども</button>
+        <button class="view-btn" onclick="setView('parent')" id="vbtn-parent">おや</button>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar" id="tabs"></div>
+  <div class="content" id="main"></div>
+</div>
+
+<button class="fab" onclick="openAdd()" aria-label="宿題を追加">＋</button>
+
+<!-- 追加モーダル -->
+<div class="sheet" id="add-sheet" style="display:none">
+  <div class="sheet-body">
+    <h2>宿題を追加</h2>
+    <div class="form-field">
+      <label>教科</label>
+      <div class="subj-grid" id="subj-grid"></div>
+    </div>
+    <div class="form-field">
+      <label>内容（例：漢字ドリル p.12-15）</label>
+      <input type="text" id="inp-title" placeholder="宿題の内容">
+    </div>
+    <div class="form-field">
+      <label>期日</label>
+      <input type="date" id="inp-due">
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="closeAdd()">キャンセル</button>
+      <button class="btn primary" onclick="submitAdd()">追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 写真プレビュー -->
+<div class="photo-overlay" id="photo-overlay" style="display:none">
+  <img id="overlay-img" src="" alt="ノート写真">
+  <button class="photo-close" onclick="closeOverlay()">閉じる</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
+
+<script>
+// ★ GAS ウェブアプリのURLを貼り付けてください ★
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyCX_6yPTvvzqizB1WhblCHERpqUR0nOua8XV0exwP4anobpIXSEf0wRiLS9JoEv7VC0w/exec';
+
+const SUBJECTS = [
+  {key:'kokugo', label:'国語', cls:'s-kokugo'},
+  {key:'sansu',  label:'算数', cls:'s-sansu'},
+  {key:'rika',   label:'理科', cls:'s-rika'},
+  {key:'shakai', label:'社会', cls:'s-shakai'},
+];
+const STEPS = [
+  {key:'solve', label:'①とく',    icon:'✏️'},
+  {key:'check', label:'②まる付け', icon:'⭕'},
+  {key:'redo',  label:'③やりなおし',icon:'🔄'},
+];
+const TABS = ['すべて','国語','算数','理科','社会','完了'];
+
+let hw = [];
+let curView = 'child';
+let curTab = 0;
+let selSubject = '';
+let pendingPhotoId = null;
+const TODAY = '2026-06-29';
+
+// ============================================================
+//  API
+// ============================================================
+async function api(method, params) {
+  setSyncing(true);
+  try {
+    let res;
+    if (method === 'GET') {
+      const qs = new URLSearchParams(params).toString();
+      res = await fetch(`${GAS_URL}?${qs}`);
+    } else {
+      res = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(params),
+      });
+    }
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    setSyncing(false);
+    return data;
+  } catch(e) {
+    setSyncing(false, true);
+    throw e;
+  }
+}
+
+function setSyncing(on, err) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  if (err) { dot.className='sync-dot'; dot.style.background='var(--danger)'; lbl.textContent='エラー'; return; }
+  if (on)  { dot.className='sync-dot syncing'; dot.style.background=''; lbl.textContent='同期中…'; }
+  else     { dot.className='sync-dot'; dot.style.background=''; lbl.textContent='同期済み'; }
+}
+
+// ============================================================
+//  初期ロード
+// ============================================================
+async function loadAll() {
+  document.getElementById('main').innerHTML = '<div class="spinner">読み込み中…</div>';
+  try {
+    const data = await api('GET', { action: 'getAll' });
+    hw = data.homework || [];
+    render();
+  } catch(e) {
+    document.getElementById('main').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>読み込めませんでした<br><small>GAS URLを確認してください</small></div>`;
+  }
+}
+
+// ============================================================
+//  ユーティリティ
+// ============================================================
+function daysLeft(due) {
+  const t = new Date(TODAY), d = new Date(due);
+  return Math.ceil((d - t) / 86400000);
+}
+function isComplete(h) { return h.steps.solve && h.steps.check && h.steps.redo; }
+function pct(h) { return Math.round(Object.values(h.steps).filter(Boolean).length / 3 * 100); }
+function nextStep(h) {
+  if (!h.steps.solve) return 'solve';
+  if (!h.steps.check) return 'check';
+  if (!h.steps.redo)  return 'redo';
+  return 'done';
+}
+function incompleteOf(subj) { return hw.filter(h => h.subject === subj && !isComplete(h)).length; }
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ============================================================
+//  レンダリング
+// ============================================================
+function setView(v) { curView = v; document.getElementById('vbtn-child').className='view-btn'+(v==='child'?' active':''); document.getElementById('vbtn-parent').className='view-btn'+(v==='parent'?' active':''); render(); }
+function setTab(i) { curTab = i; render(); }
+
+function filtered() {
+  const sMap=['','kokugo','sansu','rika','shakai',''];
+  return hw.filter(h => {
+    if (curTab === 0) return !isComplete(h);
+    if (curTab === 5) return isComplete(h);
+    return h.subject === sMap[curTab] && !isComplete(h);
+  });
+}
+
+function render() {
+  // タブ
+  document.getElementById('tabs').innerHTML = TABS.map((t,i) => {
+    const sMap=['','kokugo','sansu','rika','shakai',''];
+    let b = '';
+    if (i===0) { const c=hw.filter(h=>!isComplete(h)).length; if(c) b=`<span class="badge">${c}</span>`; }
+    else if (i<5) { const c=incompleteOf(sMap[i]); if(c) b=`<span class="badge">${c}</span>`; }
+    return `<button class="tab ${curTab===i?'active':''}" onclick="setTab(${i})">${t}${b}</button>`;
+  }).join('');
+
+  const list = filtered();
+  const isParent = curView === 'parent';
+  let html = '';
+
+  if (isParent) {
+    const done = hw.filter(isComplete).length;
+    const over = hw.filter(h => daysLeft(h.due)<0 && !isComplete(h)).length;
+    html += `<div class="summary">
+      <div class="stat"><div class="stat-lbl">完了</div><div class="stat-val" style="color:var(--success)">${done}/${hw.length}</div></div>
+      <div class="stat"><div class="stat-lbl">期日超過</div><div class="stat-val" style="color:${over?'var(--danger)':'var(--text3)'}">${over}件</div></div>
+    </div>`;
+  }
+
+  if (!list.length) {
+    html += `<div class="empty"><div class="empty-icon">🎉</div>この教科の宿題は全部終わった！</div>`;
+  } else {
+    list.forEach(h => { html += isParent ? cardParent(h) : cardChild(h); });
+  }
+  document.getElementById('main').innerHTML = html;
+}
+
+function cardChild(h) {
+  const sub = SUBJECTS.find(s=>s.key===h.subject);
+  const dl = daysLeft(h.due);
+  const dueStr = dl<0 ? `${Math.abs(dl)}日すぎた！` : dl===0 ? '今日が期日！' : `あと${dl}日`;
+  const urgent = dl<=1 && !isComplete(h);
+  const p = pct(h);
+  const ns = nextStep(h);
+
+  const steps = STEPS.map(st => {
+    const done = h.steps[st.key];
+    const next = ns === st.key;
+    let cls = 'step-btn' + (done?' done':next?' next':'');
+    return `<button class="${cls}" onclick="tapStep('${h.id}','${st.key}')" aria-label="${st.label}">
+      <span class="step-icon">${done?'✅':st.icon}</span>
+      <span class="step-label">${st.label}</span>
+    </button>`;
+  }).join('');
+
+  const photos = (h.photos||[]).map(ph =>
+    `<img class="thumb" src="${ph.driveUrl}" onclick="showPhoto('${ph.driveUrl}')" alt="写真">`
+  ).join('');
+
+  return `<div class="hw-card ${urgent?'urgent':''}">
+    <div class="card-top">
+      <span class="subj ${sub.cls}">${sub.label}</span>
+      <span class="hw-name">${esc(h.title)}</span>
+      <span class="due ${urgent?'urgent':''}">${dueStr}</span>
+    </div>
+    <div class="steps">${steps}</div>
+    <div class="progress-row">
+      <div class="bar"><div class="bar-fill" style="width:${p}%;background:${p===100?'var(--success)':'var(--accent)'}"></div></div>
+      <span class="pct">${p}%</span>
+    </div>
+    <div class="photo-row">
+      ${photos}
+      <div class="photo-add" onclick="triggerPhoto('${h.id}')" role="button" aria-label="写真を撮る">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>写真</span>
+      </div>
+    </div>
+    <textarea class="note" rows="2" placeholder="メモ（かんそうなど）" onchange="tapNote('${h.id}',this.value)">${esc(h.note||'')}</textarea>
+  </div>`;
+}
+
+function cardParent(h) {
+  const sub = SUBJECTS.find(s=>s.key===h.subject);
+  const dl = daysLeft(h.due);
+  const dueStr = dl<0 ? `${Math.abs(dl)}日超過` : `期日: ${h.due}`;
+  const urgent = dl<=1 && !isComplete(h);
+  const p = pct(h);
+
+  const stepStatus = STEPS.map(st =>
+    `<span style="font-size:12px;color:${h.steps[st.key]?'var(--success)':'var(--text3)'}">${h.steps[st.key]?'✅':'○'} ${st.label}</span>`
+  ).join('');
+
+  const photos = (h.photos||[]).length
+    ? (h.photos||[]).map(ph=>`<img class="thumb" src="${ph.driveUrl}" onclick="showPhoto('${ph.driveUrl}')" alt="写真">`).join('')
+    : `<span style="font-size:12px;color:var(--text3);padding:4px 0;display:block">写真なし</span>`;
+
+  return `<div class="hw-card ${urgent?'urgent':''}">
+    <div class="card-top">
+      <span class="subj ${sub.cls}">${sub.label}</span>
+      <span class="hw-name">${esc(h.title)}</span>
+      <span class="due ${urgent?'urgent':''}">${dueStr}</span>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:9px">${stepStatus}</div>
+    <div class="progress-row">
+      <div class="bar"><div class="bar-fill" style="width:${p}%;background:${p===100?'var(--success)':'var(--accent)'}"></div></div>
+      <span class="pct">${p===100?'完了':p+'%'}</span>
+    </div>
+    <div class="photo-row">${photos}</div>
+    ${h.note?`<div style="font-size:12px;color:var(--text2);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px">💬 ${esc(h.note)}</div>`:''}
+  </div>`;
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ============================================================
+//  インタラクション
+// ============================================================
+async function tapStep(id, step) {
+  const h = hw.find(x=>String(x.id)===String(id));
+  if (!h) return;
+  const s = h.steps;
+  if (step==='solve') s.solve = !s.solve;
+  else if (step==='check' && s.solve) s.check = !s.check;
+  else if (step==='redo' && s.check) s.redo = !s.redo;
+  else { toast('前のステップを先に終わらせよう！'); return; }
+  render();
+  try {
+    await api('POST', { action:'updateStep', id, step, value: h.steps[step] });
+    if (isComplete(h)) toast('🎉 全部終わった！');
+  } catch(e) { toast('保存に失敗しました'); }
+}
+
+async function tapNote(id, note) {
+  const h = hw.find(x=>String(x.id)===String(id));
+  if (h) h.note = note;
+  try { await api('POST', { action:'updateNote', id, note }); }
+  catch(e) { toast('メモの保存に失敗しました'); }
+}
+
+function triggerPhoto(id) { pendingPhotoId = id; document.getElementById('file-input').click(); }
+
+async function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file || !pendingPhotoId) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const base64 = ev.target.result.split(',')[1];
+    toast('写真をアップロード中…');
+    try {
+      const res = await api('POST', { action:'uploadPhoto', homeworkId: pendingPhotoId, base64 });
+      const h = hw.find(x=>String(x.id)===String(pendingPhotoId));
+      if (h) { if(!h.photos) h.photos=[]; h.photos.push({ driveUrl: res.driveUrl }); }
+      render();
+      toast('写真を保存しました！');
+    } catch(e) { toast('写真の保存に失敗しました'); }
+    pendingPhotoId = null;
+    e.target.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPhoto(url) { document.getElementById('overlay-img').src=url; document.getElementById('photo-overlay').style.display='flex'; }
+function closeOverlay() { document.getElementById('photo-overlay').style.display='none'; }
+
+// ============================================================
+//  宿題追加
+// ============================================================
+function openAdd() {
+  selSubject = '';
+  document.getElementById('inp-title').value = '';
+  const d = new Date('2026-06-29'); d.setDate(d.getDate()+3);
+  document.getElementById('inp-due').value = d.toISOString().slice(0,10);
+  document.getElementById('subj-grid').innerHTML = SUBJECTS.map(s=>
+    `<div class="subj-opt ${s.cls}" id="sopt-${s.key}" onclick="selSubj('${s.key}')">${s.label}</div>`
+  ).join('');
+  document.getElementById('add-sheet').style.display='flex';
+}
+function closeAdd() { document.getElementById('add-sheet').style.display='none'; }
+function selSubj(key) {
+  selSubject = key;
+  SUBJECTS.forEach(s => { const el=document.getElementById('sopt-'+s.key); if(el) el.style.borderWidth = s.key===key?'2px':'1.5px'; });
+}
+async function submitAdd() {
+  const title = document.getElementById('inp-title').value.trim();
+  const due   = document.getElementById('inp-due').value;
+  if (!selSubject || !title || !due) { toast('教科・内容・期日を入力してください'); return; }
+  closeAdd();
+  try {
+    const res = await api('POST', { action:'addHomework', subject:selSubject, title, due });
+    hw.unshift({ id:res.id, subject:selSubject, title, due, steps:{solve:false,check:false,redo:false}, photos:[], note:'' });
+    curTab = 0;
+    render();
+    toast('宿題を追加しました！');
+  } catch(e) { toast('追加に失敗しました'); }
+}
+
+// ============================================================
+//  起動
+// ============================================================
+loadAll();
+</script>
+</body>
+</html>
