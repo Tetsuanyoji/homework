@@ -10,7 +10,6 @@
   --accent:#2563eb;--accent-bg:#eff6ff;--accent-border:#93c5fd;
   --success:#16a34a;--success-bg:#f0fdf4;--success-border:#86efac;
   --danger:#dc2626;--danger-bg:#fef2f2;--danger-border:#fca5a5;
-  --warning:#d97706;--warning-bg:#fffbeb;
   --surface:#ffffff;--surface1:#f8fafc;--surface2:#f1f5f9;
   --border:#e2e8f0;--border-strong:#cbd5e1;
   --text:#0f172a;--text2:#475569;--text3:#94a3b8;
@@ -29,9 +28,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
 .content{padding:12px}
-.hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;transition:border-color .15s}
+.hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
 .hw-card.urgent{border-color:var(--danger-border);background:var(--danger-bg)}
-.hw-card.complete{opacity:.7}
 .card-top{display:flex;align-items:center;gap:8px;margin-bottom:11px}
 .subj{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
 .s-kokugo{background:#ede9fe;color:#5b21b6}
@@ -68,10 +66,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
 .form-field{margin-bottom:14px}
 .form-field label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;font-weight:500}
 .form-field input,.form-field select{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;font-family:inherit}
-.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--accent)}
+.form-field input:focus{outline:none;border-color:var(--accent)}
 .subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .subj-opt{padding:10px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;transition:all .15s;-webkit-tap-highlight-color:transparent}
-.subj-opt.selected{border-width:2px}
+.subj-opt.selected{border-width:2.5px}
 .btn-row{display:flex;gap:8px;margin-top:18px}
 .btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
 .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -83,15 +81,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
 .empty{text-align:center;padding:48px 16px;color:var(--text3)}
 .empty-icon{font-size:40px;margin-bottom:8px}
 .spinner{display:flex;justify-content:center;padding:40px;color:var(--text3);font-size:13px}
-.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap}
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1}
 .photo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .photo-overlay img{max-width:94%;max-height:72vh;border-radius:10px}
 .photo-close{color:#fff;background:rgba(255,255,255,.15);border:none;padding:10px 24px;border-radius:20px;cursor:pointer;font-size:14px}
 .sync-indicator{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--success)}
-.sync-dot.syncing{background:var(--warning);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-dot.syncing{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
@@ -99,7 +97,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
   <div class="header">
     <h1>📚 早稲アカ 宿題</h1>
     <div style="display:flex;align-items:center;gap:10px">
-      <div class="sync-indicator"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">同期済み</span></div>
+      <div class="sync-indicator">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-label">同期済み</span>
+      </div>
       <div class="view-toggle">
         <button class="view-btn active" onclick="setView('child')" id="vbtn-child">こども</button>
         <button class="view-btn" onclick="setView('parent')" id="vbtn-parent">おや</button>
@@ -112,7 +113,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
 
 <button class="fab" onclick="openAdd()" aria-label="宿題を追加">＋</button>
 
-<!-- 追加モーダル -->
 <div class="sheet" id="add-sheet" style="display:none">
   <div class="sheet-body">
     <h2>宿題を追加</h2>
@@ -135,7 +135,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
   </div>
 </div>
 
-<!-- 写真プレビュー -->
 <div class="photo-overlay" id="photo-overlay" style="display:none">
   <img id="overlay-img" src="" alt="ノート写真">
   <button class="photo-close" onclick="closeOverlay()">閉じる</button>
@@ -145,7 +144,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP'
 <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
 
 <script>
-// ★ GAS ウェブアプリのURLを貼り付けてください ★
+// ★ GAS ウェブアプリのURLをここに貼り付けてください ★
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyCX_6yPTvvzqizB1WhblCHERpqUR0nOua8XV0exwP4anobpIXSEf0wRiLS9JoEv7VC0w/exec';
 
 const SUBJECTS = [
@@ -155,7 +154,7 @@ const SUBJECTS = [
   {key:'shakai', label:'社会', cls:'s-shakai'},
 ];
 const STEPS = [
-  {key:'solve', label:'①とく',    icon:'✏️'},
+  {key:'solve', label:'①とく',     icon:'✏️'},
   {key:'check', label:'②まる付け', icon:'⭕'},
   {key:'redo',  label:'③やりなおし',icon:'🔄'},
 ];
@@ -166,24 +165,15 @@ let curView = 'child';
 let curTab = 0;
 let selSubject = '';
 let pendingPhotoId = null;
-const TODAY = '2026-06-29';
 
 // ============================================================
-//  API
+//  API（GETのみ使用）
 // ============================================================
-async function api(method, params) {
+async function api(params) {
   setSyncing(true);
   try {
-    let res;
-    if (method === 'GET') {
-      const qs = new URLSearchParams(params).toString();
-      res = await fetch(`${GAS_URL}?${qs}`);
-    } else {
-      res = await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(params),
-      });
-    }
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetch(GAS_URL + '?' + qs);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     setSyncing(false);
@@ -197,9 +187,19 @@ async function api(method, params) {
 function setSyncing(on, err) {
   const dot = document.getElementById('sync-dot');
   const lbl = document.getElementById('sync-label');
-  if (err) { dot.className='sync-dot'; dot.style.background='var(--danger)'; lbl.textContent='エラー'; return; }
-  if (on)  { dot.className='sync-dot syncing'; dot.style.background=''; lbl.textContent='同期中…'; }
-  else     { dot.className='sync-dot'; dot.style.background=''; lbl.textContent='同期済み'; }
+  if (err) {
+    dot.className = 'sync-dot';
+    dot.style.background = '#dc2626';
+    lbl.textContent = 'エラー';
+  } else if (on) {
+    dot.className = 'sync-dot syncing';
+    dot.style.background = '#d97706';
+    lbl.textContent = '同期中…';
+  } else {
+    dot.className = 'sync-dot';
+    dot.style.background = '';
+    lbl.textContent = '同期済み';
+  }
 }
 
 // ============================================================
@@ -208,19 +208,23 @@ function setSyncing(on, err) {
 async function loadAll() {
   document.getElementById('main').innerHTML = '<div class="spinner">読み込み中…</div>';
   try {
-    const data = await api('GET', { action: 'getAll' });
+    const data = await api({ action: 'getAll' });
     hw = data.homework || [];
     render();
   } catch(e) {
-    document.getElementById('main').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>読み込めませんでした<br><small>GAS URLを確認してください</small></div>`;
+    document.getElementById('main').innerHTML =
+      '<div class="empty"><div class="empty-icon">⚠️</div>読み込めませんでした<br><small style="font-size:11px">' + e.message + '</small></div>';
   }
 }
 
 // ============================================================
 //  ユーティリティ
 // ============================================================
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
 function daysLeft(due) {
-  const t = new Date(TODAY), d = new Date(due);
+  const t = new Date(today()), d = new Date(due);
   return Math.ceil((d - t) / 86400000);
 }
 function isComplete(h) { return h.steps.solve && h.steps.check && h.steps.redo; }
@@ -232,7 +236,9 @@ function nextStep(h) {
   return 'done';
 }
 function incompleteOf(subj) { return hw.filter(h => h.subject === subj && !isComplete(h)).length; }
-
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -243,11 +249,16 @@ function toast(msg) {
 // ============================================================
 //  レンダリング
 // ============================================================
-function setView(v) { curView = v; document.getElementById('vbtn-child').className='view-btn'+(v==='child'?' active':''); document.getElementById('vbtn-parent').className='view-btn'+(v==='parent'?' active':''); render(); }
+function setView(v) {
+  curView = v;
+  document.getElementById('vbtn-child').className = 'view-btn' + (v === 'child' ? ' active' : '');
+  document.getElementById('vbtn-parent').className = 'view-btn' + (v === 'parent' ? ' active' : '');
+  render();
+}
 function setTab(i) { curTab = i; render(); }
 
 function filtered() {
-  const sMap=['','kokugo','sansu','rika','shakai',''];
+  const sMap = ['','kokugo','sansu','rika','shakai',''];
   return hw.filter(h => {
     if (curTab === 0) return !isComplete(h);
     if (curTab === 5) return isComplete(h);
@@ -256,13 +267,12 @@ function filtered() {
 }
 
 function render() {
-  // タブ
-  document.getElementById('tabs').innerHTML = TABS.map((t,i) => {
-    const sMap=['','kokugo','sansu','rika','shakai',''];
+  document.getElementById('tabs').innerHTML = TABS.map((t, i) => {
+    const sMap = ['','kokugo','sansu','rika','shakai',''];
     let b = '';
-    if (i===0) { const c=hw.filter(h=>!isComplete(h)).length; if(c) b=`<span class="badge">${c}</span>`; }
-    else if (i<5) { const c=incompleteOf(sMap[i]); if(c) b=`<span class="badge">${c}</span>`; }
-    return `<button class="tab ${curTab===i?'active':''}" onclick="setTab(${i})">${t}${b}</button>`;
+    if (i === 0) { const c = hw.filter(h => !isComplete(h)).length; if (c) b = '<span class="badge">' + c + '</span>'; }
+    else if (i < 5) { const c = incompleteOf(sMap[i]); if (c) b = '<span class="badge">' + c + '</span>'; }
+    return '<button class="tab ' + (curTab === i ? 'active' : '') + '" onclick="setTab(' + i + ')">' + t + b + '</button>';
   }).join('');
 
   const list = filtered();
@@ -271,15 +281,15 @@ function render() {
 
   if (isParent) {
     const done = hw.filter(isComplete).length;
-    const over = hw.filter(h => daysLeft(h.due)<0 && !isComplete(h)).length;
-    html += `<div class="summary">
-      <div class="stat"><div class="stat-lbl">完了</div><div class="stat-val" style="color:var(--success)">${done}/${hw.length}</div></div>
-      <div class="stat"><div class="stat-lbl">期日超過</div><div class="stat-val" style="color:${over?'var(--danger)':'var(--text3)'}">${over}件</div></div>
-    </div>`;
+    const over = hw.filter(h => daysLeft(h.due) < 0 && !isComplete(h)).length;
+    html += '<div class="summary">'
+      + '<div class="stat"><div class="stat-lbl">完了</div><div class="stat-val" style="color:var(--success)">' + done + '/' + hw.length + '</div></div>'
+      + '<div class="stat"><div class="stat-lbl">期日超過</div><div class="stat-val" style="color:' + (over ? 'var(--danger)' : 'var(--text3)') + '">' + over + '件</div></div>'
+      + '</div>';
   }
 
   if (!list.length) {
-    html += `<div class="empty"><div class="empty-icon">🎉</div>この教科の宿題は全部終わった！</div>`;
+    html += '<div class="empty"><div class="empty-icon">🎉</div>この教科の宿題は全部終わった！</div>';
   } else {
     list.forEach(h => { html += isParent ? cardParent(h) : cardChild(h); });
   }
@@ -287,104 +297,95 @@ function render() {
 }
 
 function cardChild(h) {
-  const sub = SUBJECTS.find(s=>s.key===h.subject);
+  const sub = SUBJECTS.find(s => s.key === h.subject);
   const dl = daysLeft(h.due);
-  const dueStr = dl<0 ? `${Math.abs(dl)}日すぎた！` : dl===0 ? '今日が期日！' : `あと${dl}日`;
-  const urgent = dl<=1 && !isComplete(h);
+  const dueStr = dl < 0 ? Math.abs(dl) + '日すぎた！' : dl === 0 ? '今日が期日！' : 'あと' + dl + '日';
+  const urgent = dl <= 1 && !isComplete(h);
   const p = pct(h);
   const ns = nextStep(h);
 
   const steps = STEPS.map(st => {
     const done = h.steps[st.key];
     const next = ns === st.key;
-    let cls = 'step-btn' + (done?' done':next?' next':'');
-    return `<button class="${cls}" onclick="tapStep('${h.id}','${st.key}')" aria-label="${st.label}">
-      <span class="step-icon">${done?'✅':st.icon}</span>
-      <span class="step-label">${st.label}</span>
-    </button>`;
+    const cls = 'step-btn' + (done ? ' done' : next ? ' next' : '');
+    return '<button class="' + cls + '" onclick="tapStep(\'' + h.id + '\',\'' + st.key + '\')" aria-label="' + st.label + '">'
+      + '<span class="step-icon">' + (done ? '✅' : st.icon) + '</span>'
+      + '<span class="step-label">' + st.label + '</span>'
+      + '</button>';
   }).join('');
 
-  const photos = (h.photos||[]).map(ph =>
-    `<img class="thumb" src="${ph.driveUrl}" onclick="showPhoto('${ph.driveUrl}')" alt="写真">`
+  const photos = (h.photos || []).map(ph =>
+    '<img class="thumb" src="' + ph.driveUrl + '" onclick="showPhoto(\'' + ph.driveUrl + '\')" alt="写真">'
   ).join('');
 
-  return `<div class="hw-card ${urgent?'urgent':''}">
-    <div class="card-top">
-      <span class="subj ${sub.cls}">${sub.label}</span>
-      <span class="hw-name">${esc(h.title)}</span>
-      <span class="due ${urgent?'urgent':''}">${dueStr}</span>
-    </div>
-    <div class="steps">${steps}</div>
-    <div class="progress-row">
-      <div class="bar"><div class="bar-fill" style="width:${p}%;background:${p===100?'var(--success)':'var(--accent)'}"></div></div>
-      <span class="pct">${p}%</span>
-    </div>
-    <div class="photo-row">
-      ${photos}
-      <div class="photo-add" onclick="triggerPhoto('${h.id}')" role="button" aria-label="写真を撮る">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        <span>写真</span>
-      </div>
-    </div>
-    <textarea class="note" rows="2" placeholder="メモ（かんそうなど）" onchange="tapNote('${h.id}',this.value)">${esc(h.note||'')}</textarea>
-  </div>`;
+  const addBtn = '<div class="photo-add" onclick="triggerPhoto(\'' + h.id + '\')" role="button" aria-label="写真を撮る">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>'
+    + '<span>写真</span></div>';
+
+  return '<div class="hw-card' + (urgent ? ' urgent' : '') + '">'
+    + '<div class="card-top">'
+    + '<span class="subj ' + sub.cls + '">' + sub.label + '</span>'
+    + '<span class="hw-name">' + esc(h.title) + '</span>'
+    + '<span class="due' + (urgent ? ' urgent' : '') + '">' + dueStr + '</span>'
+    + '</div>'
+    + '<div class="steps">' + steps + '</div>'
+    + '<div class="progress-row"><div class="bar"><div class="bar-fill" style="width:' + p + '%;background:' + (p === 100 ? 'var(--success)' : 'var(--accent)') + '"></div></div><span class="pct">' + p + '%</span></div>'
+    + '<div class="photo-row">' + photos + addBtn + '</div>'
+    + '<textarea class="note" rows="2" placeholder="メモ（かんそうなど）" onchange="tapNote(\'' + h.id + '\',this.value)">' + esc(h.note || '') + '</textarea>'
+    + '</div>';
 }
 
 function cardParent(h) {
-  const sub = SUBJECTS.find(s=>s.key===h.subject);
+  const sub = SUBJECTS.find(s => s.key === h.subject);
   const dl = daysLeft(h.due);
-  const dueStr = dl<0 ? `${Math.abs(dl)}日超過` : `期日: ${h.due}`;
-  const urgent = dl<=1 && !isComplete(h);
+  const dueStr = dl < 0 ? Math.abs(dl) + '日超過' : '期日: ' + h.due;
+  const urgent = dl <= 1 && !isComplete(h);
   const p = pct(h);
 
   const stepStatus = STEPS.map(st =>
-    `<span style="font-size:12px;color:${h.steps[st.key]?'var(--success)':'var(--text3)'}">${h.steps[st.key]?'✅':'○'} ${st.label}</span>`
+    '<span style="font-size:12px;color:' + (h.steps[st.key] ? 'var(--success)' : 'var(--text3)') + '">' + (h.steps[st.key] ? '✅' : '○') + ' ' + st.label + '</span>'
   ).join('');
 
-  const photos = (h.photos||[]).length
-    ? (h.photos||[]).map(ph=>`<img class="thumb" src="${ph.driveUrl}" onclick="showPhoto('${ph.driveUrl}')" alt="写真">`).join('')
-    : `<span style="font-size:12px;color:var(--text3);padding:4px 0;display:block">写真なし</span>`;
+  const photos = (h.photos || []).length
+    ? (h.photos || []).map(ph => '<img class="thumb" src="' + ph.driveUrl + '" onclick="showPhoto(\'' + ph.driveUrl + '\')" alt="写真">').join('')
+    : '<span style="font-size:12px;color:var(--text3)">写真なし</span>';
 
-  return `<div class="hw-card ${urgent?'urgent':''}">
-    <div class="card-top">
-      <span class="subj ${sub.cls}">${sub.label}</span>
-      <span class="hw-name">${esc(h.title)}</span>
-      <span class="due ${urgent?'urgent':''}">${dueStr}</span>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:9px">${stepStatus}</div>
-    <div class="progress-row">
-      <div class="bar"><div class="bar-fill" style="width:${p}%;background:${p===100?'var(--success)':'var(--accent)'}"></div></div>
-      <span class="pct">${p===100?'完了':p+'%'}</span>
-    </div>
-    <div class="photo-row">${photos}</div>
-    ${h.note?`<div style="font-size:12px;color:var(--text2);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px">💬 ${esc(h.note)}</div>`:''}
-  </div>`;
+  return '<div class="hw-card' + (urgent ? ' urgent' : '') + '">'
+    + '<div class="card-top">'
+    + '<span class="subj ' + sub.cls + '">' + sub.label + '</span>'
+    + '<span class="hw-name">' + esc(h.title) + '</span>'
+    + '<span class="due' + (urgent ? ' urgent' : '') + '">' + dueStr + '</span>'
+    + '</div>'
+    + '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:9px">' + stepStatus + '</div>'
+    + '<div class="progress-row"><div class="bar"><div class="bar-fill" style="width:' + p + '%;background:' + (p === 100 ? 'var(--success)' : 'var(--accent)') + '"></div></div><span class="pct">' + (p === 100 ? '完了' : p + '%') + '</span></div>'
+    + '<div class="photo-row">' + photos + '</div>'
+    + (h.note ? '<div style="font-size:12px;color:var(--text2);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px">💬 ' + esc(h.note) + '</div>' : '')
+    + '</div>';
 }
-
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ============================================================
 //  インタラクション
 // ============================================================
 async function tapStep(id, step) {
-  const h = hw.find(x=>String(x.id)===String(id));
+  const h = hw.find(x => x.id === id);
   if (!h) return;
   const s = h.steps;
-  if (step==='solve') s.solve = !s.solve;
-  else if (step==='check' && s.solve) s.check = !s.check;
-  else if (step==='redo' && s.check) s.redo = !s.redo;
+  let newVal;
+  if (step === 'solve') { s.solve = !s.solve; newVal = s.solve; }
+  else if (step === 'check' && s.solve) { s.check = !s.check; newVal = s.check; }
+  else if (step === 'redo' && s.check) { s.redo = !s.redo; newVal = s.redo; }
   else { toast('前のステップを先に終わらせよう！'); return; }
   render();
   try {
-    await api('POST', { action:'updateStep', id, step, value: h.steps[step] });
+    await api({ action: 'updateStep', id, step, value: String(newVal) });
     if (isComplete(h)) toast('🎉 全部終わった！');
-  } catch(e) { toast('保存に失敗しました'); }
+  } catch(e) { toast('保存に失敗しました: ' + e.message); }
 }
 
 async function tapNote(id, note) {
-  const h = hw.find(x=>String(x.id)===String(id));
+  const h = hw.find(x => x.id === id);
   if (h) h.note = note;
-  try { await api('POST', { action:'updateNote', id, note }); }
+  try { await api({ action: 'updateNote', id, note }); }
   catch(e) { toast('メモの保存に失敗しました'); }
 }
 
@@ -398,20 +399,20 @@ async function handlePhoto(e) {
     const base64 = ev.target.result.split(',')[1];
     toast('写真をアップロード中…');
     try {
-      const res = await api('POST', { action:'uploadPhoto', homeworkId: pendingPhotoId, base64 });
-      const h = hw.find(x=>String(x.id)===String(pendingPhotoId));
-      if (h) { if(!h.photos) h.photos=[]; h.photos.push({ driveUrl: res.driveUrl }); }
+      const res = await api({ action: 'uploadPhoto', homeworkId: pendingPhotoId, base64 });
+      const h = hw.find(x => x.id === pendingPhotoId);
+      if (h) { if (!h.photos) h.photos = []; h.photos.push({ driveUrl: res.driveUrl }); }
       render();
       toast('写真を保存しました！');
-    } catch(e) { toast('写真の保存に失敗しました'); }
+    } catch(e) { toast('写真の保存に失敗しました: ' + e.message); }
     pendingPhotoId = null;
     e.target.value = '';
   };
   reader.readAsDataURL(file);
 }
 
-function showPhoto(url) { document.getElementById('overlay-img').src=url; document.getElementById('photo-overlay').style.display='flex'; }
-function closeOverlay() { document.getElementById('photo-overlay').style.display='none'; }
+function showPhoto(url) { document.getElementById('overlay-img').src = url; document.getElementById('photo-overlay').style.display = 'flex'; }
+function closeOverlay() { document.getElementById('photo-overlay').style.display = 'none'; }
 
 // ============================================================
 //  宿題追加
@@ -419,17 +420,20 @@ function closeOverlay() { document.getElementById('photo-overlay').style.display
 function openAdd() {
   selSubject = '';
   document.getElementById('inp-title').value = '';
-  const d = new Date('2026-06-29'); d.setDate(d.getDate()+3);
-  document.getElementById('inp-due').value = d.toISOString().slice(0,10);
-  document.getElementById('subj-grid').innerHTML = SUBJECTS.map(s=>
-    `<div class="subj-opt ${s.cls}" id="sopt-${s.key}" onclick="selSubj('${s.key}')">${s.label}</div>`
+  const d = new Date(); d.setDate(d.getDate() + 3);
+  document.getElementById('inp-due').value = d.toISOString().slice(0, 10);
+  document.getElementById('subj-grid').innerHTML = SUBJECTS.map(s =>
+    '<div class="subj-opt ' + s.cls + '" id="sopt-' + s.key + '" onclick="selSubj(\'' + s.key + '\')">' + s.label + '</div>'
   ).join('');
-  document.getElementById('add-sheet').style.display='flex';
+  document.getElementById('add-sheet').style.display = 'flex';
 }
-function closeAdd() { document.getElementById('add-sheet').style.display='none'; }
+function closeAdd() { document.getElementById('add-sheet').style.display = 'none'; }
 function selSubj(key) {
   selSubject = key;
-  SUBJECTS.forEach(s => { const el=document.getElementById('sopt-'+s.key); if(el) el.style.borderWidth = s.key===key?'2px':'1.5px'; });
+  SUBJECTS.forEach(s => {
+    const el = document.getElementById('sopt-' + s.key);
+    if (el) el.style.borderWidth = s.key === key ? '2.5px' : '1.5px';
+  });
 }
 async function submitAdd() {
   const title = document.getElementById('inp-title').value.trim();
@@ -437,17 +441,14 @@ async function submitAdd() {
   if (!selSubject || !title || !due) { toast('教科・内容・期日を入力してください'); return; }
   closeAdd();
   try {
-    const res = await api('POST', { action:'addHomework', subject:selSubject, title, due });
-    hw.unshift({ id:res.id, subject:selSubject, title, due, steps:{solve:false,check:false,redo:false}, photos:[], note:'' });
+    const res = await api({ action: 'addHomework', subject: selSubject, title, due });
+    hw.unshift({ id: String(res.id), subject: selSubject, title, due, steps: {solve:false,check:false,redo:false}, photos: [], note: '' });
     curTab = 0;
     render();
     toast('宿題を追加しました！');
-  } catch(e) { toast('追加に失敗しました'); }
+  } catch(e) { toast('追加に失敗しました: ' + e.message); }
 }
 
-// ============================================================
-//  起動
-// ============================================================
 loadAll();
 </script>
 </body>
