@@ -590,12 +590,12 @@ function openAdd() {
 
   // テンプレート選択用教科グリッド
   document.getElementById('tmpl-subj-grid').innerHTML = SUBJECTS.map(s =>
-    '<div class="subj-opt '+s.cls+'" id="tsopt-'+s.key+'" onclick="selTmplSubj(\"'+s.key+'\")">' +s.label+'</div>'
+    '<div class="subj-opt '+s.cls+'" id="tsopt-'+s.key+'" onclick="selTmplSubj(this.dataset.key)" data-key="'+s.key+'">'+s.label+'</div>'
   ).join('');
 
   // 直接入力用教科グリッド
   document.getElementById('subj-grid').innerHTML = SUBJECTS.map(s =>
-    '<div class="subj-opt '+s.cls+'" id="sopt-'+s.key+'" onclick="selSubj(\"'+s.key+'\")">' +s.label+'</div>'
+    '<div class="subj-opt '+s.cls+'" id="sopt-'+s.key+'" onclick="selSubj(this.dataset.key)" data-key="'+s.key+'">'+s.label+'</div>'
   ).join('');
 
   renderTemplateList();
@@ -612,8 +612,9 @@ function renderTemplateList() {
   const d = new Date(); d.setDate(d.getDate()+3);
   const defaultDue = d.toISOString().slice(0,10);
   el.innerHTML = templates.map((t, i) => {
+  el.innerHTML = templates.map((t, i) => {
     const sub = SUBJECTS.find(s => s.key === t.subject);
-    return '<div class="template-item" onclick="useTemplate('+i+')">'
+    return '<div class="template-item" onclick="useTemplate('+i+')">' 
       +'<span class="subj '+sub.cls+'" style="font-size:11px;padding:2px 7px">'+sub.label+'</span>'
       +'<div class="template-item-text">'
       +'<div class="template-item-name">'+esc(t.title)+'</div>'
@@ -621,7 +622,6 @@ function renderTemplateList() {
       +'</div>'
       +'<button class="template-delete" onclick="deleteTemplate(event,'+i+')" aria-label="削除">×</button>'
       +'</div>';
-  }).join('');
 }
 
 function selSubj(key) {
