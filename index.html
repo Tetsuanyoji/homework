@@ -68,8 +68,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .field input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;font-family:inherit}
 .field input:focus{outline:none;border-color:var(--accent)}
 .subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
-.subj-btn{padding:10px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;background:var(--surface)}
-.subj-btn.sel{border-width:2.5px}
+.subj-btn{padding:10px;border:2px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;background:var(--surface);color:var(--text2);opacity:.55;transition:all .15s}
+.subj-btn:active{transform:scale(.96)}
+.subj-btn.sel{opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.subj-btn.sel.s-kokugo{background:#ede9fe;border-color:#8b5cf6;color:#5b21b6}
+.subj-btn.sel.s-sansu{background:#dbeafe;border-color:#3b82f6;color:#1d4ed8}
+.subj-btn.sel.s-rika{background:#dcfce7;border-color:#22c55e;color:#166534}
+.subj-btn.sel.s-shakai{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.subj-btn.sel::after{content:' ✓';font-weight:700}
 .btn-row{display:flex;gap:8px;margin-top:18px}
 .btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
 .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -489,11 +495,11 @@ function bgClose(e,id){ if(e.target===document.getElementById(id)) closeAdd(); }
 
 function selSubj(btn){
   selS=btn.dataset.k;
-  document.querySelectorAll('#sgrid .subj-btn').forEach(function(b){ b.style.borderWidth=b.dataset.k===selS?'2.5px':'1.5px'; });
+  document.querySelectorAll('#sgrid .subj-btn').forEach(function(b){ b.classList.toggle('sel', b.dataset.k===selS); });
 }
 function selTSubj(btn){
   selTS=btn.dataset.k;
-  document.querySelectorAll('#tgrid .subj-btn').forEach(function(b){ b.style.borderWidth=b.dataset.k===selTS?'2.5px':'1.5px'; });
+  document.querySelectorAll('#tgrid .subj-btn').forEach(function(b){ b.classList.toggle('sel', b.dataset.k===selTS); });
 }
 
 function renderTmpl(){
@@ -520,7 +526,7 @@ function addTemplate(){
   saveTmpl(list);
   document.getElementById('tinput').value='';
   selTS='';
-  document.querySelectorAll('#tgrid .subj-btn').forEach(function(b){ b.style.borderWidth='1.5px'; });
+  document.querySelectorAll('#tgrid .subj-btn').forEach(function(b){ b.classList.remove('sel'); });
   renderTmpl();
   toast('登録しました！');
 }
