@@ -68,14 +68,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .field input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;font-family:inherit}
 .field input:focus{outline:none;border-color:var(--accent)}
 .subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
-.subj-btn{padding:10px;border:2px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;font-size:14px;font-weight:600;background:var(--surface);color:var(--text2);opacity:.55;transition:all .15s}
+.subj-btn{padding:12px 10px;border:2.5px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;font-size:14px;font-weight:700;background:#f1f5f9;color:#94a3b8;transition:all .15s}
 .subj-btn:active{transform:scale(.96)}
-.subj-btn.sel{opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.subj-btn.sel.s-kokugo{background:#ede9fe;border-color:#8b5cf6;color:#5b21b6}
-.subj-btn.sel.s-sansu{background:#dbeafe;border-color:#3b82f6;color:#1d4ed8}
-.subj-btn.sel.s-rika{background:#dcfce7;border-color:#22c55e;color:#166534}
-.subj-btn.sel.s-shakai{background:#fef3c7;border-color:#f59e0b;color:#92400e}
-.subj-btn.sel::after{content:' ✓';font-weight:700}
+.subj-btn.sel{color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(0,0,0,.18);transform:scale(1.02)}
+.subj-btn.sel.s-kokugo{background:#7c3aed}
+.subj-btn.sel.s-sansu{background:#2563eb}
+.subj-btn.sel.s-rika{background:#16a34a}
+.subj-btn.sel.s-shakai{background:#d97706}
+.subj-btn.sel::after{content:' ✓';font-weight:900}
 .btn-row{display:flex;gap:8px;margin-top:18px}
 .btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
 .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -171,11 +171,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 <!-- 撮影シート -->
 <div class="overlay" id="shoot-overlay" style="display:none">
   <div class="shoot-sheet">
-    <div class="shoot-title" id="shoot-title">📸 ノートを撮影</div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div class="shoot-title" id="shoot-title">📸 ノートを撮影</div>
+      <button onclick="cancelShoot()" aria-label="閉じる" style="background:var(--surface1);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;font-size:16px;color:var(--text2);cursor:pointer;flex-shrink:0;line-height:1">×</button>
+    </div>
     <div class="shoot-sub" id="shoot-sub">解いたページが全部写るように撮ってね。複数ページは続けて撮れます。</div>
     <div class="shoot-thumbs" id="shoot-thumbs"></div>
     <button class="shoot-btn cam" onclick="doShoot()">📷 写真を撮る</button>
     <button class="shoot-btn fin" id="shoot-fin" onclick="finishShoot()" style="display:none">✅ 撮影完了・次へ進む</button>
+    <button onclick="cancelShoot()" style="width:100%;padding:10px;border:none;background:none;color:var(--text3);font-size:13px;cursor:pointer">やめる</button>
   </div>
 </div>
 
@@ -424,6 +428,15 @@ function openShoot(id, step){
 
 function doShoot(){
   document.getElementById('finput').click();
+}
+
+function cancelShoot(){
+  if(shootPhotos.length > 0){
+    if(!confirm('撮った写真は保存されますが、ステップは「完了」になりません。やめますか？')) return;
+  }
+  document.getElementById('shoot-overlay').style.display='none';
+  render(); // 撮影済み写真があればカードに反映
+  shootId=null; shootStep=null; shootPhotos=[];
 }
 
 async function onPhoto(e){
