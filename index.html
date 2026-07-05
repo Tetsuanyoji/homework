@@ -11,6 +11,7 @@
   --success:#16a34a;--success-bg:#f0fdf4;--success-border:#86efac;
   --danger:#dc2626;--danger-bg:#fef2f2;--danger-border:#fca5a5;
   --warning:#d97706;--warning-bg:#fffbeb;
+  --purple:#7c3aed;
   --surface:#fff;--surface1:#f8fafc;--surface2:#f1f5f9;
   --border:#e2e8f0;--border-strong:#cbd5e1;
   --text:#0f172a;--text2:#475569;--text3:#94a3b8;
@@ -29,65 +30,86 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
 .content{padding:12px}
+/* カード */
 .hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
 .hw-card.urgent{border-color:var(--danger-border);background:var(--danger-bg)}
-.card-top{display:flex;align-items:center;gap:8px;margin-bottom:11px}
-.subj{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
+.card-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:11px}
+.subj{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0;margin-top:1px}
 .s-kokugo{background:#ede9fe;color:#5b21b6}
 .s-sansu{background:#dbeafe;color:#1d4ed8}
 .s-rika{background:#dcfce7;color:#166534}
 .s-shakai{background:#fef3c7;color:#92400e}
-.hw-name{font-size:14px;font-weight:600;flex:1;line-height:1.3}
-.due{font-size:11px;color:var(--text3);flex-shrink:0}
+.card-title-area{flex:1}
+.hw-name{font-size:14px;font-weight:600;line-height:1.3}
+.hw-kai{font-size:11px;color:var(--text3);margin-top:1px}
+.due{font-size:11px;color:var(--text3);flex-shrink:0;margin-top:2px}
 .due.urgent{color:var(--danger);font-weight:600}
-.steps{display:flex;gap:6px;margin-bottom:10px}
-.step-btn{flex:1;padding:8px 4px;border:1px solid var(--border);border-radius:9px;background:var(--surface1);cursor:pointer;text-align:center;transition:all .15s;position:relative}
+/* ステップ */
+.steps{display:flex;gap:5px;margin-bottom:10px}
+.step-btn{flex:1;padding:8px 2px;border:1px solid var(--border);border-radius:9px;background:var(--surface1);cursor:pointer;text-align:center;transition:all .15s;position:relative;-webkit-tap-highlight-color:transparent}
 .step-btn.done{background:var(--success-bg);border-color:var(--success-border)}
 .step-btn.next{border-color:var(--accent-border);background:var(--accent-bg)}
-.step-icon{font-size:17px;display:block;margin-bottom:2px}
-.step-label{font-size:10px;color:var(--text2);font-weight:500;display:block}
+.step-btn.parent-confirm{border-color:#f59e0b;background:#fffbeb}
+.step-btn.parent-confirm.done{background:#fef3c7;border-color:#d97706}
+.step-icon{font-size:15px;display:block;margin-bottom:2px}
+.step-label{font-size:9px;color:var(--text2);font-weight:500;display:block;line-height:1.2}
 .step-btn.done .step-label{color:var(--success)}
 .step-btn.next .step-label{color:var(--accent)}
-.photo-badge{position:absolute;top:-4px;right:-4px;background:var(--warning);color:#fff;font-size:9px;padding:1px 4px;border-radius:6px;font-weight:600}
+.step-btn.parent-confirm .step-label{color:#d97706}
+.photo-badge{position:absolute;top:-4px;right:-4px;background:var(--warning);color:#fff;font-size:8px;padding:1px 3px;border-radius:5px;font-weight:600}
 .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .bar{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
 .bar-fill{height:100%;border-radius:3px;transition:width .4s}
 .pct{font-size:11px;color:var(--text3);min-width:30px;text-align:right}
 .photo-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.thumb{width:62px;height:62px;border-radius:8px;border:1px solid var(--border);object-fit:cover;cursor:pointer}
+.thumb{width:58px;height:58px;border-radius:8px;border:1px solid var(--border);object-fit:cover;cursor:pointer}
 .note{width:100%;font-size:12px;border:1px solid var(--border);border-radius:7px;padding:7px 9px;background:var(--surface1);color:var(--text2);resize:none;line-height:1.5;font-family:inherit}
 .note:focus{outline:none;border-color:var(--accent)}
+/* 親カード追加ボタン */
+.parent-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.p-btn{padding:6px 12px;border-radius:7px;border:1px solid var(--border-strong);background:var(--surface1);font-size:12px;cursor:pointer;font-weight:500;font-family:inherit}
+.p-btn.danger{border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}
+/* FAB */
 .fab{position:fixed;bottom:22px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,99,235,.4);z-index:100}
-.overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:200}
+/* オーバーレイ */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:200;backdrop-filter:blur(2px)}
 .sheet{background:var(--surface);border-radius:18px 18px 0 0;width:100%;padding:20px 16px 36px;max-height:92vh;overflow-y:auto}
-.sheet h2{font-size:16px;font-weight:700;margin-bottom:4px}
+.sheet-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sheet-hdr h2{font-size:16px;font-weight:700}
+.close-x{background:var(--surface1);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;font-size:16px;color:var(--text2);cursor:pointer;flex-shrink:0;line-height:30px;text-align:center}
 .sheet-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
-.sec-title{font-size:12px;color:var(--text3);font-weight:600;margin-bottom:8px}
+.sec-title{font-size:12px;color:var(--text3);font-weight:600;margin-bottom:8px;margin-top:4px}
 .field{margin-bottom:14px}
 .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;font-weight:500}
-.field input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;font-family:inherit}
-.field input:focus{outline:none;border-color:var(--accent)}
-.subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;font-family:inherit}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
+.subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .subj-btn{padding:12px 10px;border:2.5px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;font-size:14px;font-weight:700;background:#f1f5f9;color:#94a3b8;transition:all .15s}
-.subj-btn:active{transform:scale(.96)}
 .subj-btn.sel{color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(0,0,0,.18);transform:scale(1.02)}
 .subj-btn.sel.s-kokugo{background:#7c3aed}
 .subj-btn.sel.s-sansu{background:#2563eb}
 .subj-btn.sel.s-rika{background:#16a34a}
 .subj-btn.sel.s-shakai{background:#d97706}
-.subj-btn.sel::after{content:' ✓';font-weight:900}
+.subj-btn.sel::after{content:" ✓";font-weight:900}
 .btn-row{display:flex;gap:8px;margin-top:18px}
 .btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
 .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
 .divider{border:none;border-top:1px solid var(--border);margin:14px 0}
-.tmpl-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface1);border:1px solid var(--border);border-radius:10px;cursor:pointer;margin-bottom:8px}
+/* テンプレート */
+.tmpl-subj-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.tmpl-subj-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface1);font-size:14px;font-weight:600;text-align:left}
+.tmpl-subj-btn.sel{border-color:var(--accent);background:var(--accent-bg)}
+.tmpl-item-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.tmpl-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface1);border:1px solid var(--border);border-radius:10px;cursor:pointer}
+.tmpl-item:active{background:var(--accent-bg);border-color:var(--accent-border)}
 .tmpl-text{flex:1}
 .tmpl-name{font-size:14px;font-weight:500}
-.tmpl-sub{font-size:11px;color:var(--text3);margin-top:1px}
 .tmpl-del{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:2px 6px;line-height:1}
-.add-row{display:flex;gap:8px;margin-bottom:14px}
+.add-row{display:flex;gap:8px;margin-bottom:8px}
 .add-row input{flex:1;padding:9px 12px;border:1px solid var(--border-strong);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--surface);color:var(--text)}
 .add-row button{padding:9px 14px;border-radius:var(--radius);border:1px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+/* サマリー */
 .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
 .stat-val{font-size:24px;font-weight:700;margin-top:2px}
@@ -100,12 +122,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .photo-full img{max-width:94%;max-height:72vh;border-radius:10px}
 .photo-full button{color:#fff;background:rgba(255,255,255,.15);border:none;padding:10px 24px;border-radius:20px;cursor:pointer;font-size:14px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;margin-right:4px}
-.sync-dot.ing{background:var(--warning);animation:pulse 1s infinite}
+.sync-dot.ing{animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 /* 撮影シート */
 .shoot-sheet{background:var(--surface);border-radius:18px 18px 0 0;width:100%;padding:24px 16px 36px}
-.shoot-title{font-size:16px;font-weight:700;margin-bottom:6px}
-.shoot-sub{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5}
 .shoot-thumbs{display:flex;gap:8px;flex-wrap:wrap;min-height:62px;margin-bottom:16px}
 .shoot-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px}
 .shoot-btn.cam{background:var(--accent);color:#fff}
@@ -131,20 +151,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 <button class="fab" onclick="openAdd()">＋</button>
 
 <!-- 宿題追加 -->
-<div class="overlay" id="add-overlay" style="display:none" onclick="bgClose(event,'add-overlay')">
-  <div class="sheet">
-    <h2>宿題を追加</h2>
+<div class="overlay" id="add-overlay" style="display:none">
+  <div class="sheet" id="add-sheet">
+    <div class="sheet-hdr"><h2>宿題を追加</h2><button class="close-x" onclick="closeAdd()">×</button></div>
     <p class="sheet-sub">よく使う宿題から選ぶか、直接入力してください</p>
 
     <div class="sec-title">📋 よく使う宿題</div>
-    <div id="tmpl-list"></div>
-
-    <div class="divider"></div>
-    <div class="sec-title">＋ よく使う宿題を登録</div>
-    <div class="subj-grid" id="tgrid"></div>
-    <div class="add-row">
-      <input type="text" id="tinput" placeholder="宿題の名前（例：漢字ドリル p.○○）">
-      <button onclick="addTemplate()">登録</button>
+    <div class="sec-title" style="font-size:11px;color:var(--accent);margin-top:-4px">① 教科を選ぶ</div>
+    <div class="subj-grid" id="tmpl-subj-grid"></div>
+    <div id="tmpl-item-area" style="display:none">
+      <div class="sec-title" style="font-size:11px;color:var(--accent)">② 宿題を選ぶ</div>
+      <div class="tmpl-item-list" id="tmpl-item-list"></div>
+      <div class="sec-title" style="font-size:11px;color:var(--text3)">＋ この教科に宿題を追加登録</div>
+      <div class="add-row">
+        <input type="text" id="tinput" placeholder="宿題名（例：計算ドリル）">
+        <button onclick="addTemplate()">登録</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:4px">
+      <label>③ 回数（任意）</label>
+      <input type="text" id="tmpl-kai" placeholder="例：第12回">
+    </div>
+    <div class="field">
+      <label>④ 期日</label>
+      <input type="date" id="tmpl-due">
+    </div>
+    <div class="btn-row" id="tmpl-add-btn-row" style="display:none">
+      <button class="btn primary" onclick="useTmpl()">追加する</button>
     </div>
 
     <div class="divider"></div>
@@ -158,6 +191,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
       <input type="text" id="inp-title" placeholder="宿題の内容">
     </div>
     <div class="field">
+      <label>回数（任意）</label>
+      <input type="text" id="inp-kai" placeholder="例：第12回">
+    </div>
+    <div class="field">
       <label>期日</label>
       <input type="date" id="inp-due">
     </div>
@@ -168,14 +205,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
   </div>
 </div>
 
+<!-- 編集モーダル -->
+<div class="overlay" id="edit-overlay" style="display:none">
+  <div class="sheet">
+    <div class="sheet-hdr"><h2>宿題を編集</h2><button class="close-x" onclick="closeEdit()">×</button></div>
+    <div class="field">
+      <label>教科</label>
+      <div class="subj-grid" id="edit-sgrid"></div>
+    </div>
+    <div class="field">
+      <label>内容</label>
+      <input type="text" id="edit-title">
+    </div>
+    <div class="field">
+      <label>回数（任意）</label>
+      <input type="text" id="edit-kai" placeholder="例：第12回">
+    </div>
+    <div class="field">
+      <label>期日</label>
+      <input type="date" id="edit-due">
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="closeEdit()">キャンセル</button>
+      <button class="btn primary" onclick="submitEdit()">保存する</button>
+    </div>
+  </div>
+</div>
+
 <!-- 撮影シート -->
 <div class="overlay" id="shoot-overlay" style="display:none">
   <div class="shoot-sheet">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
-      <div class="shoot-title" id="shoot-title">📸 ノートを撮影</div>
-      <button onclick="cancelShoot()" aria-label="閉じる" style="background:var(--surface1);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;font-size:16px;color:var(--text2);cursor:pointer;flex-shrink:0;line-height:1">×</button>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+      <div style="font-size:16px;font-weight:700" id="shoot-title">📸 ノートを撮影</div>
+      <button class="close-x" onclick="cancelShoot()">×</button>
     </div>
-    <div class="shoot-sub" id="shoot-sub">解いたページが全部写るように撮ってね。複数ページは続けて撮れます。</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5" id="shoot-sub"></div>
     <div class="shoot-thumbs" id="shoot-thumbs"></div>
     <button class="shoot-btn cam" onclick="doShoot()">📷 写真を撮る</button>
     <button class="shoot-btn fin" id="shoot-fin" onclick="finishShoot()" style="display:none">✅ 撮影完了・次へ進む</button>
@@ -201,15 +265,20 @@ const SUBJS = [
   {k:'rika',   l:'理科', c:'s-rika'},
   {k:'shakai', l:'社会', c:'s-shakai'},
 ];
+
+// ステップ定義（④親確認を追加）
 const STEPS = [
-  {k:'solve', l:'①解く',     icon:'✏️', photo:true},
-  {k:'check', l:'②丸付け',   icon:'⭕', photo:false},
-  {k:'redo',  l:'③解き直し', icon:'🔄', photo:true},
+  {k:'solve', l:'①解く',     icon:'✏️', photo:true,  parentOnly:false},
+  {k:'check', l:'②丸付け',   icon:'⭕', photo:false, parentOnly:false},
+  {k:'redo',  l:'③解き直し', icon:'🔄', photo:true,  parentOnly:false},
+  {k:'parent',l:'④親確認',   icon:'👀', photo:false, parentOnly:true},
 ];
+
 const TABS = ['全て','国語','算数','理科','社会','完了'];
 
-let hw = [], view = 'child', tab = 0;
-let selS = '', selTS = '';
+let hw = [], curView = 'child', curTab = 0;
+let selS = '', selTS = '', selTmplIdx = -1;
+let editId = null, editSelS = '';
 let shootId = null, shootStep = null, shootPhotos = [];
 
 // ── テンプレート ──
@@ -221,42 +290,39 @@ async function api(p){
   setSyn(true);
   try{
     const r = await fetch(GAS+'?'+new URLSearchParams(p).toString());
-    const text = await r.text();
-    const d = JSON.parse(text);
+    const d = await r.json();
     if(d.error) throw new Error(d.error);
     setSyn(false); return d;
   }catch(e){ setSyn(false,true); throw e; }
 }
 
-// ── Imgur アップロード ──
+// ── Imgur ──
 async function uploadToImgur(base64){
   const r = await fetch('https://api.imgur.com/3/image', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Client-ID 546c25a59c58ad7',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({image: base64, type: 'base64'}),
+    method:'POST',
+    headers:{'Authorization':'Client-ID 546c25a59c58ad7','Content-Type':'application/json'},
+    body: JSON.stringify({image:base64, type:'base64'}),
   });
   const d = await r.json();
   if(!d.success) throw new Error('Imgur upload failed');
   return d.data.link;
 }
+
 function setSyn(on,err){
   const dot=document.getElementById('sdot'), lbl=document.getElementById('slbl');
   if(err){ dot.style.background='#dc2626'; lbl.textContent='エラー'; }
-  else if(on){ dot.className='sync-dot ing'; dot.style.background=''; lbl.textContent='同期中…'; }
+  else if(on){ dot.className='sync-dot ing'; dot.style.background='#d97706'; lbl.textContent='同期中…'; }
   else{ dot.className='sync-dot'; dot.style.background=''; lbl.textContent='同期済み'; }
 }
 
 async function load(){
-  document.getElementById('main').innerHTML = '<div class="spinner">読み込み中…</div>';
+  document.getElementById('main').innerHTML='<div class="spinner">読み込み中…</div>';
   try{
-    const d = await api({action:'getAll'});
-    hw = d.homework||[];
+    const d=await api({action:'getAll'});
+    hw=d.homework||[];
     render();
   }catch(e){
-    document.getElementById('main').innerHTML = '<div class="empty">⚠️ 読み込めませんでした<br><small>'+e.message+'</small></div>';
+    document.getElementById('main').innerHTML='<div class="empty">⚠️ 読み込めませんでした<br><small>'+e.message+'</small></div>';
   }
 }
 
@@ -265,53 +331,59 @@ function daysLeft(due){
   const t=new Date(new Date().toISOString().slice(0,10)), d=new Date(due);
   return Math.ceil((d-t)/86400000);
 }
-function done(h){ return h.steps.solve&&h.steps.check&&h.steps.redo; }
-function pct(h){ return Math.round(Object.values(h.steps).filter(Boolean).length/3*100); }
-function nxt(h){ if(!h.steps.solve)return'solve'; if(!h.steps.check)return'check'; if(!h.steps.redo)return'redo'; return'done'; }
-function incOf(s){ return hw.filter(h=>h.subject===s&&!done(h)).length; }
+function isDone(h){ return h.steps.solve&&h.steps.check&&h.steps.redo&&h.steps.parent; }
+function pct(h){ return Math.round(Object.values(h.steps).filter(Boolean).length/4*100); }
+function nxt(h){
+  if(!h.steps.solve) return 'solve';
+  if(!h.steps.check) return 'check';
+  if(!h.steps.redo)  return 'redo';
+  if(!h.steps.parent) return 'parent';
+  return 'done';
+}
+function incOf(s){ return hw.filter(h=>h.subject===s&&!isDone(h)).length; }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(m){ const e=document.getElementById('toast'); e.textContent=m; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),2400); }
-function hasPhoto(h,k){ return (h.photos||[]).some(p=>p.step===k); }
 
 // ── レンダリング ──
 function setView(v){
-  view=v;
+  curView=v;
   document.getElementById('vbtn-child').className='view-btn'+(v==='child'?' active':'');
   document.getElementById('vbtn-parent').className='view-btn'+(v==='parent'?' active':'');
   render();
 }
-function setTab(i){ tab=i; render(); }
+function setTab(i){ curTab=i; render(); }
 
 function filtered(){
   const sm=['','kokugo','sansu','rika','shakai',''];
   return hw.filter(h=>{
-    if(tab===0) return !done(h);
-    if(tab===5) return done(h);
-    return h.subject===sm[tab]&&!done(h);
+    if(curTab===0) return !isDone(h);
+    if(curTab===5) return isDone(h);
+    return h.subject===sm[curTab]&&!isDone(h);
   });
 }
 
 function render(){
-  // tabs
   document.getElementById('tabs').innerHTML=TABS.map((t,i)=>{
     const sm=['','kokugo','sansu','rika','shakai',''];
     let b='';
-    if(i===0){ const c=hw.filter(h=>!done(h)).length; if(c) b='<span class="badge">'+c+'</span>'; }
+    if(i===0){ const c=hw.filter(h=>!isDone(h)).length; if(c) b='<span class="badge">'+c+'</span>'; }
     else if(i<5){ const c=incOf(sm[i]); if(c) b='<span class="badge">'+c+'</span>'; }
-    return '<button class="tab'+(tab===i?' active':'')+'" onclick="setTab('+i+')">'+t+b+'</button>';
+    return '<button class="tab'+(curTab===i?' active':'')+'" onclick="setTab('+i+')">'+t+b+'</button>';
   }).join('');
 
   const list=filtered();
   let html='';
-  if(view==='parent'){
-    const d=hw.filter(done).length, ov=hw.filter(h=>daysLeft(h.due)<0&&!done(h)).length;
-    html+='<div class="summary"><div class="stat"><div class="stat-lbl">完了</div><div class="stat-val" style="color:var(--success)">'+d+'/'+hw.length+'</div></div>'
-      +'<div class="stat"><div class="stat-lbl">期日超過</div><div class="stat-val" style="color:'+(ov?'var(--danger)':'var(--text3)')+'">'+ov+'件</div></div></div>';
+  if(curView==='parent'){
+    const d=hw.filter(isDone).length, ov=hw.filter(h=>daysLeft(h.due)<0&&!isDone(h)).length;
+    html+='<div class="summary">'
+      +'<div class="stat"><div class="stat-lbl">完了</div><div class="stat-val" style="color:var(--success)">'+d+'/'+hw.length+'</div></div>'
+      +'<div class="stat"><div class="stat-lbl">期日超過</div><div class="stat-val" style="color:'+(ov?'var(--danger)':'var(--text3)')+'">'+ov+'件</div></div>'
+      +'</div>';
   }
   if(!list.length){
     html+='<div class="empty"><div style="font-size:40px;margin-bottom:8px">🎉</div>この教科の宿題は全部終わった！</div>';
   } else {
-    list.forEach(h=>{ html+=view==='parent'?cardP(h):cardC(h); });
+    list.forEach(h=>{ html+=curView==='parent'?cardP(h):cardC(h); });
   }
   document.getElementById('main').innerHTML=html;
 }
@@ -320,21 +392,25 @@ function cardC(h){
   const sub=SUBJS.find(s=>s.k===h.subject)||SUBJS[0];
   const dl=daysLeft(h.due);
   const ds=dl<0?Math.abs(dl)+'日過ぎた！':dl===0?'今日が期日！':'あと'+dl+'日';
-  const urg=dl<=1&&!done(h);
+  const urg=dl<=1&&!isDone(h);
   const p=pct(h), ns=nxt(h);
 
   let steps='';
   STEPS.forEach(function(st){
     const d=h.steps[st.k], isNext=ns===st.k;
-    let cls='step-btn';
-    if(d) cls+=' done';
-    else if(isNext) cls+=' next';
+    // 親確認ステップは子ども画面では表示のみ（タップ不可）
+    if(st.parentOnly){
+      steps+='<div class="step-btn parent-confirm'+(d?' done':'')+'" style="cursor:default">'
+        +'<span class="step-icon">'+(d?'✅':st.icon)+'</span>'
+        +'<span class="step-label">'+st.l+'</span>'
+        +'</div>';
+      return;
+    }
+    let cls='step-btn'; if(d) cls+=' done'; else if(isNext) cls+=' next';
     const badge=st.photo&&!d?'<span class="photo-badge">📷</span>':'';
     steps+='<button class="'+cls+'" data-id="'+h.id+'" data-step="'+st.k+'" onclick="tapStep(this)">'
-      +badge
-      +'<span class="step-icon">'+(d?'✅':st.icon)+'</span>'
-      +'<span class="step-label">'+st.l+'</span>'
-      +'</button>';
+      +badge+'<span class="step-icon">'+(d?'✅':st.icon)+'</span>'
+      +'<span class="step-label">'+st.l+'</span></button>';
   });
 
   let photos='';
@@ -342,10 +418,10 @@ function cardC(h){
     photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" onclick="openPhoto(this.dataset.url)" alt="写真">';
   });
 
-  return '<div class="hw-card'+(urg?' urgent':'')+'">'
+  return '<div class="hw-card'+(urg?' urgent':'')+'\">'
     +'<div class="card-top">'
     +'<span class="subj '+sub.c+'">'+sub.l+'</span>'
-    +'<span class="hw-name">'+esc(h.title)+'</span>'
+    +'<div class="card-title-area"><div class="hw-name">'+esc(h.title)+'</div>'+(h.kai?'<div class="hw-kai">'+esc(h.kai)+'</div>':'')+'</div>'
     +'<span class="due'+(urg?' urgent':'')+'">'+ds+'</span>'
     +'</div>'
     +'<div class="steps">'+steps+'</div>'
@@ -359,14 +435,18 @@ function cardP(h){
   const sub=SUBJS.find(s=>s.k===h.subject)||SUBJS[0];
   const dl=daysLeft(h.due);
   const ds=dl<0?Math.abs(dl)+'日超過':'期日: '+h.due;
-  const urg=dl<=1&&!done(h);
+  const urg=dl<=1&&!isDone(h);
   const p=pct(h);
 
-  let ss='';
+  let steps='';
   STEPS.forEach(function(st){
     const d=h.steps[st.k];
     const pc=(h.photos||[]).filter(function(x){return x.step===st.k;}).length;
-    ss+='<span style="font-size:12px;color:'+(d?'var(--success)':'var(--text3)')+'">'+(d?'✅':'○')+' '+st.l+(pc?' 📷'+pc+'枚':'')+'</span> ';
+    let cls='step-btn'+(d?' done':nxt(h)===st.k?' next':'');
+    if(st.k==='parent') cls='step-btn parent-confirm'+(d?' done':'');
+    steps+='<button class="'+cls+'" data-id="'+h.id+'" data-step="'+st.k+'" onclick="tapStepParent(this)">'
+      +'<span class="step-icon">'+(d?'✅':st.icon)+'</span>'
+      +'<span class="step-label">'+st.l+(pc?' 📷'+pc:'')+'</span></button>';
   });
 
   let photos='';
@@ -374,65 +454,79 @@ function cardP(h){
     (h.photos||[]).forEach(function(ph){
       photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" onclick="openPhoto(this.dataset.url)" alt="写真">';
     });
-  } else {
-    photos='<span style="font-size:12px;color:var(--text3)">写真なし</span>';
-  }
+  } else { photos='<span style="font-size:12px;color:var(--text3)">写真なし</span>'; }
 
-  return '<div class="hw-card'+(urg?' urgent':'')+'">'
+  return '<div class="hw-card'+(urg?' urgent':'')+'\">'
     +'<div class="card-top">'
     +'<span class="subj '+sub.c+'">'+sub.l+'</span>'
-    +'<span class="hw-name">'+esc(h.title)+'</span>'
+    +'<div class="card-title-area"><div class="hw-name">'+esc(h.title)+'</div>'+(h.kai?'<div class="hw-kai">'+esc(h.kai)+'</div>':'')+'</div>'
     +'<span class="due'+(urg?' urgent':'')+'">'+ds+'</span>'
     +'</div>'
-    +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:9px">'+ss+'</div>'
+    +'<div class="steps">'+steps+'</div>'
     +'<div class="bar-row"><div class="bar"><div class="bar-fill" style="width:'+p+'%;background:'+(p===100?'var(--success)':'var(--accent)')+'"></div></div><span class="pct">'+(p===100?'完了':p+'%')+'</span></div>'
     +'<div class="photo-row">'+photos+'</div>'
-    +(h.note?'<div style="font-size:12px;color:var(--text2);border-left:2px solid var(--accent);padding-left:8px;margin-top:8px">💬 '+esc(h.note)+'</div>':'')
+    +(h.note?'<div style="font-size:12px;color:var(--text2);border-left:2px solid var(--accent);padding-left:8px;margin-top:4px;margin-bottom:8px">💬 '+esc(h.note)+'</div>':'')
+    +'<div class="parent-actions">'
+    +'<button class="p-btn" data-id="'+h.id+'" onclick="openEdit(this.dataset.id)">✏️ 編集</button>'
+    +'<button class="p-btn danger" data-id="'+h.id+'" onclick="deleteHw(this.dataset.id)">🗑 削除</button>'
+    +'</div>'
     +'</div>';
 }
 
-// ── ステップ操作 ──
+// ── ステップ操作（子ども） ──
 async function tapStep(btn){
   const id=btn.dataset.id, step=btn.dataset.step;
-  const h=hw.find(function(x){return x.id===id;});
-  if(!h) return;
-  const st=STEPS.find(function(x){return x.k===step;});
-
-  // 完了済み → 取り消し
+  const h=hw.find(x=>x.id===id); if(!h) return;
+  const st=STEPS.find(x=>x.k===step);
   if(h.steps[step]){
     h.steps[step]=false; render();
     try{ await api({action:'updateStep',id,step,value:'false'}); }
-    catch(e){ toast('保存に失敗しました'); }
-    return;
+    catch(e){ toast('保存に失敗しました'); } return;
   }
-
-  // 順序チェック
   if(step==='check'&&!h.steps.solve){ toast('先に「①解く」を終わらせよう！'); return; }
   if(step==='redo'&&!h.steps.check){ toast('先に「②丸付け」を終わらせよう！'); return; }
-
-  // 写真必須
-  if(st.photo){ openShoot(id, step); return; }
-
-  // 写真不要 → 完了
+  if(st.photo){ openShoot(id,step); return; }
   h.steps[step]=true; render();
   try{
     await api({action:'updateStep',id,step,value:'true'});
-    if(done(h)) toast('🎉 全部終わった！');
+    if(step==='redo') toast('③解き直し完了！あとは親に確認してもらおう👀');
+    else if(isDone(h)) toast('🎉 全部終わった！');
   }catch(e){ toast('保存に失敗しました: '+e.message); }
+}
+
+// ── ステップ操作（親：自由に変更可） ──
+async function tapStepParent(btn){
+  const id=btn.dataset.id, step=btn.dataset.step;
+  const h=hw.find(x=>x.id===id); if(!h) return;
+  h.steps[step]=!h.steps[step];
+  render();
+  try{
+    await api({action:'updateStep',id,step,value:String(h.steps[step])});
+    if(isDone(h)) toast('✅ 全ステップ完了！');
+  }catch(e){ toast('保存に失敗しました'); }
 }
 
 async function tapNote(el){
   const id=el.dataset.id, note=el.value;
-  const h=hw.find(function(x){return x.id===id;});
-  if(h) h.note=note;
+  const h=hw.find(x=>x.id===id); if(h) h.note=note;
   try{ await api({action:'updateNote',id,note}); }
   catch(e){ toast('メモの保存に失敗しました'); }
 }
 
+// ── 削除 ──
+async function deleteHw(id){
+  if(!confirm('この宿題を削除しますか？')) return;
+  try{
+    await api({action:'deleteHomework',id});
+    hw=hw.filter(x=>x.id!==id);
+    render(); toast('削除しました');
+  }catch(e){ toast('削除に失敗しました: '+e.message); }
+}
+
 // ── 撮影フロー ──
-function openShoot(id, step){
+function openShoot(id,step){
   shootId=id; shootStep=step; shootPhotos=[];
-  const st=STEPS.find(function(x){return x.k===step;});
+  const st=STEPS.find(x=>x.k===step);
   document.getElementById('shoot-title').textContent='📸 '+st.l+' のノートを撮影';
   document.getElementById('shoot-sub').textContent=
     step==='solve'?'解いたページが全部写るように撮ってね。複数ページは続けて撮れます。'
@@ -441,27 +535,17 @@ function openShoot(id, step){
   document.getElementById('shoot-fin').style.display='none';
   document.getElementById('shoot-overlay').style.display='flex';
 }
-
-function doShoot(){
-  document.getElementById('finput').click();
-}
-
+function doShoot(){ document.getElementById('finput').click(); }
 function cancelShoot(){
-  if(shootPhotos.length > 0){
-    if(!confirm('撮った写真は保存されますが、ステップは「完了」になりません。やめますか？')) return;
-  }
+  if(shootPhotos.length>0&&!confirm('撮影をやめますか？（撮った写真は保存されます）')) return;
   document.getElementById('shoot-overlay').style.display='none';
-  render(); // 撮影済み写真があればカードに反映
-  shootId=null; shootStep=null; shootPhotos=[];
+  render(); shootId=null; shootStep=null; shootPhotos=[];
 }
-
 async function onPhoto(e){
-  const file=e.target.files[0];
-  if(!file) return;
+  const file=e.target.files[0]; if(!file) return;
   const reader=new FileReader();
   reader.onload=async function(ev){
     const b64=ev.target.result.split(',')[1];
-    // サムネ表示（即時）
     const img=document.createElement('img');
     img.style.cssText='width:62px;height:62px;border-radius:8px;border:1px solid var(--border);object-fit:cover;opacity:.5';
     img.src=ev.target.result;
@@ -469,141 +553,166 @@ async function onPhoto(e){
     document.getElementById('shoot-fin').style.display='block';
     toast('アップロード中…');
     try{
-      // Imgur に直接アップロード（GASを経由しない）
-      const imgUrl = await uploadToImgur(b64);
+      const imgUrl=await uploadToImgur(b64);
       img.style.opacity='1';
-      // GASのスプレッドシートにURLだけ記録
-      await api({action:'uploadPhoto', homeworkId:shootId, stepKey:shootStep, driveUrl:imgUrl});
-      shootPhotos.push({driveUrl:imgUrl, step:shootStep});
-      const h=hw.find(function(x){return x.id===shootId;});
-      if(h){ if(!h.photos) h.photos=[]; h.photos.push({driveUrl:imgUrl, step:shootStep}); }
+      await api({action:'uploadPhoto',homeworkId:shootId,stepKey:shootStep,driveUrl:imgUrl});
+      shootPhotos.push({driveUrl:imgUrl,step:shootStep});
+      const h=hw.find(x=>x.id===shootId);
+      if(h){ if(!h.photos) h.photos=[]; h.photos.push({driveUrl:imgUrl,step:shootStep}); }
       toast('写真を保存しました！続けて撮る場合はもう一度タップ');
-    }catch(err){ 
-      img.remove();
-      if(document.getElementById('shoot-thumbs').children.length===0){
-        document.getElementById('shoot-fin').style.display='none';
-      }
-      toast('写真の保存に失敗しました: '+err.message); 
-    }
+    }catch(err){ img.remove(); toast('写真の保存に失敗しました: '+err.message); }
     e.target.value='';
   };
   reader.readAsDataURL(file);
 }
-
 async function finishShoot(){
   if(shootPhotos.length===0){ toast('写真を1枚以上撮ってね！'); return; }
   const id=shootId, step=shootStep;
   document.getElementById('shoot-overlay').style.display='none';
-  const h=hw.find(function(x){return x.id===id;});
+  const h=hw.find(x=>x.id===id);
   if(h){ h.steps[step]=true; }
   render();
   try{
     await api({action:'updateStep',id,step,value:'true'});
-    const st=STEPS.find(function(x){return x.k===step;});
-    if(h&&done(h)) toast('🎉 全部終わった！');
-    else toast('✅ '+st.l+' 完了！');
+    if(step==='redo') toast('③解き直し完了！あとは親に確認してもらおう👀');
+    else if(h&&isDone(h)) toast('🎉 全部終わった！');
+    else toast('✅ '+STEPS.find(x=>x.k===step).l+' 完了！');
   }catch(e){ toast('保存に失敗しました'); }
   shootId=null; shootStep=null; shootPhotos=[];
 }
-
 function openPhoto(url){ document.getElementById('full-img').src=url; document.getElementById('photo-full').style.display='flex'; }
 function closePhoto(){ document.getElementById('photo-full').style.display='none'; }
 
 // ── 宿題追加 ──
 function openAdd(){
-  selS=''; selTS='';
+  selS=''; selTS=''; selTmplIdx=-1;
   const d=new Date(); d.setDate(d.getDate()+3);
   document.getElementById('inp-title').value='';
+  document.getElementById('inp-kai').value='';
+  document.getElementById('tmpl-kai').value='';
   document.getElementById('inp-due').value=d.toISOString().slice(0,10);
-
-  // テンプレート教科グリッド
-  document.getElementById('tgrid').innerHTML=SUBJS.map(function(s){
-    return '<button class="subj-btn '+s.c+'" data-k="'+s.k+'" onclick="selTSubj(this)">'+s.l+'</button>';
-  }).join('');
-
-  // 直接入力教科グリッド
+  document.getElementById('tmpl-due').value=d.toISOString().slice(0,10);
+  document.getElementById('tmpl-item-area').style.display='none';
+  document.getElementById('tmpl-add-btn-row').style.display='none';
   document.getElementById('sgrid').innerHTML=SUBJS.map(function(s){
     return '<button class="subj-btn '+s.c+'" data-k="'+s.k+'" onclick="selSubj(this)">'+s.l+'</button>';
   }).join('');
-
-  renderTmpl();
+  document.getElementById('tmpl-subj-grid').innerHTML=SUBJS.map(function(s){
+    return '<button class="subj-btn '+s.c+'" data-k="'+s.k+'" onclick="selTmplSubj(this)">'+s.l+'</button>';
+  }).join('');
   document.getElementById('add-overlay').style.display='flex';
 }
 function closeAdd(){ document.getElementById('add-overlay').style.display='none'; }
-function bgClose(e,id){ if(e.target===document.getElementById(id)) closeAdd(); }
 
 function selSubj(btn){
   selS=btn.dataset.k;
-  document.querySelectorAll('#sgrid .subj-btn').forEach(function(b){ b.classList.toggle('sel', b.dataset.k===selS); });
-}
-function selTSubj(btn){
-  selTS=btn.dataset.k;
-  document.querySelectorAll('#tgrid .subj-btn').forEach(function(b){ b.classList.toggle('sel', b.dataset.k===selTS); });
+  document.querySelectorAll('#sgrid .subj-btn').forEach(function(b){ b.classList.toggle('sel',b.dataset.k===selS); });
 }
 
-function renderTmpl(){
-  const list=getTmpl();
-  const el=document.getElementById('tmpl-list');
-  if(!list.length){
-    el.innerHTML='<div style="font-size:13px;color:var(--text3);margin-bottom:8px">まだ登録していません。</div>'; return;
-  }
+function selTmplSubj(btn){
+  selTS=btn.dataset.k; selTmplIdx=-1;
+  document.querySelectorAll('#tmpl-subj-grid .subj-btn').forEach(function(b){ b.classList.toggle('sel',b.dataset.k===selTS); });
+  renderTmplItems();
+  document.getElementById('tmpl-item-area').style.display='block';
+  document.getElementById('tmpl-add-btn-row').style.display='none';
+}
+
+function renderTmplItems(){
+  const list=getTmpl().filter(function(t){ return t.subject===selTS; });
+  const el=document.getElementById('tmpl-item-list');
+  if(!list.length){ el.innerHTML='<div style="font-size:13px;color:var(--text3);margin-bottom:8px">まだ登録がありません。下から追加してください。</div>'; return; }
   el.innerHTML=list.map(function(t,i){
-    const sub=SUBJS.find(function(s){return s.k===t.subject;})||SUBJS[0];
-    return '<div class="tmpl-item" data-i="'+i+'" onclick="useTmpl(this.dataset.i)">'
-      +'<span class="subj '+sub.c+'" style="font-size:11px;padding:2px 7px">'+sub.l+'</span>'
-      +'<div class="tmpl-text"><div class="tmpl-name">'+esc(t.title)+'</div><div class="tmpl-sub">タップして期日を設定して追加</div></div>'
+    return '<div class="tmpl-item" data-i="'+i+'" onclick="selTmplItem(this,'+i+')">'
+      +'<div class="tmpl-text"><div class="tmpl-name">'+esc(t.title)+'</div></div>'
       +'<button class="tmpl-del" data-i="'+i+'" onclick="delTmpl(event,this.dataset.i)">×</button>'
       +'</div>';
   }).join('');
 }
 
+function selTmplItem(el, i){
+  selTmplIdx=i;
+  document.querySelectorAll('.tmpl-item').forEach(function(b){ b.style.borderColor=b.dataset.i==i?'var(--accent)':'var(--border)'; b.style.background=b.dataset.i==i?'var(--accent-bg)':'var(--surface1)'; });
+  document.getElementById('tmpl-add-btn-row').style.display='flex';
+}
+
 function addTemplate(){
   const title=document.getElementById('tinput').value.trim();
-  if(!selTS||!title){ toast('教科と宿題名を入力してください'); return; }
+  if(!selTS||!title){ toast('宿題名を入力してください'); return; }
   const list=getTmpl();
   list.push({subject:selTS,title});
   saveTmpl(list);
   document.getElementById('tinput').value='';
-  selTS='';
-  document.querySelectorAll('#tgrid .subj-btn').forEach(function(b){ b.classList.remove('sel'); });
-  renderTmpl();
+  renderTmplItems();
   toast('登録しました！');
 }
 
 function delTmpl(e,i){
   e.stopPropagation();
-  const list=getTmpl();
-  list.splice(parseInt(i),1);
-  saveTmpl(list);
-  renderTmpl();
+  const allList=getTmpl();
+  const subjList=allList.filter(function(t){return t.subject===selTS;});
+  const target=subjList[parseInt(i)];
+  const newList=allList.filter(function(t){return t!==target;});
+  saveTmpl(newList);
+  renderTmplItems();
 }
 
-async function useTmpl(i){
-  const list=getTmpl();
-  const t=list[parseInt(i)];
-  if(!t) return;
-  const due=document.getElementById('inp-due').value;
-  if(!due){ toast('下の「期日」を入力してからタップしてください'); return; }
+async function useTmpl(){
+  if(selTmplIdx<0){ toast('宿題を選んでください'); return; }
+  const due=document.getElementById('tmpl-due').value;
+  const kai=document.getElementById('tmpl-kai').value.trim();
+  if(!due){ toast('期日を入力してください'); return; }
+  const list=getTmpl().filter(function(t){return t.subject===selTS;});
+  const t=list[selTmplIdx]; if(!t) return;
   closeAdd();
   try{
-    const r=await api({action:'addHomework',subject:t.subject,title:t.title,due});
-    hw.unshift({id:String(r.id),subject:t.subject,title:t.title,due,steps:{solve:false,check:false,redo:false},photos:[],note:''});
-    tab=0; render();
-    toast('宿題を追加しました！');
+    const r=await api({action:'addHomework',subject:t.subject,title:t.title,kai,due});
+    hw.unshift({id:String(r.id),subject:t.subject,title:t.title,kai,due,steps:{solve:false,check:false,redo:false,parent:false},photos:[],note:''});
+    curTab=0; render(); toast('宿題を追加しました！');
   }catch(e){ toast('追加に失敗しました: '+e.message); }
 }
 
 async function submitAdd(){
   const title=document.getElementById('inp-title').value.trim();
+  const kai=document.getElementById('inp-kai').value.trim();
   const due=document.getElementById('inp-due').value;
   if(!selS||!title||!due){ toast('教科・内容・期日を入力してください'); return; }
   closeAdd();
   try{
-    const r=await api({action:'addHomework',subject:selS,title,due});
-    hw.unshift({id:String(r.id),subject:selS,title,due,steps:{solve:false,check:false,redo:false},photos:[],note:''});
-    tab=0; render();
-    toast('宿題を追加しました！');
+    const r=await api({action:'addHomework',subject:selS,title,kai,due});
+    hw.unshift({id:String(r.id),subject:selS,title,kai,due,steps:{solve:false,check:false,redo:false,parent:false},photos:[],note:''});
+    curTab=0; render(); toast('宿題を追加しました！');
   }catch(e){ toast('追加に失敗しました: '+e.message); }
+}
+
+// ── 編集 ──
+function openEdit(id){
+  const h=hw.find(x=>x.id===id); if(!h) return;
+  editId=id; editSelS=h.subject;
+  document.getElementById('edit-title').value=h.title||'';
+  document.getElementById('edit-kai').value=h.kai||'';
+  document.getElementById('edit-due').value=h.due||'';
+  document.getElementById('edit-sgrid').innerHTML=SUBJS.map(function(s){
+    return '<button class="subj-btn '+s.c+(s.k===h.subject?' sel':'')+'" data-k="'+s.k+'" onclick="selEditSubj(this)">'+s.l+(s.k===h.subject?' ✓':'')+'</button>';
+  }).join('');
+  document.getElementById('edit-overlay').style.display='flex';
+}
+function closeEdit(){ document.getElementById('edit-overlay').style.display='none'; }
+function selEditSubj(btn){
+  editSelS=btn.dataset.k;
+  document.querySelectorAll('#edit-sgrid .subj-btn').forEach(function(b){ b.classList.toggle('sel',b.dataset.k===editSelS); });
+}
+async function submitEdit(){
+  const title=document.getElementById('edit-title').value.trim();
+  const kai=document.getElementById('edit-kai').value.trim();
+  const due=document.getElementById('edit-due').value;
+  if(!editSelS||!title||!due){ toast('教科・内容・期日を入力してください'); return; }
+  closeEdit();
+  try{
+    await api({action:'editHomework',id:editId,subject:editSelS,title,kai,due});
+    const h=hw.find(x=>x.id===editId);
+    if(h){ h.subject=editSelS; h.title=title; h.kai=kai; h.due=due; }
+    render(); toast('更新しました！');
+  }catch(e){ toast('更新に失敗しました: '+e.message); }
 }
 
 load();
