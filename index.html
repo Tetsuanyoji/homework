@@ -281,9 +281,14 @@ let selS = '', selTS = '', selTmplIdx = -1;
 let editId = null, editSelS = '';
 let shootId = null, shootStep = null, shootPhotos = [];
 
-// ── テンプレート ──
-function getTmpl(){ try{ return JSON.parse(localStorage.getItem('tmpl')||'[]'); }catch(e){ return []; } }
-function saveTmpl(a){ localStorage.setItem('tmpl', JSON.stringify(a)); }
+// ── テンプレート（GASのスプレッドシートで管理） ──
+let tmplCache = [];
+async function loadTemplates(){
+  try{
+    const d = await api({action:'getTemplates'});
+    tmplCache = d.templates || [];
+  }catch(e){ tmplCache = []; }
+}
 
 // ── API ──
 async function api(p){
@@ -318,7 +323,10 @@ function setSyn(on,err){
 async function load(){
   document.getElementById('main').innerHTML='<div class="spinner">読み込み中…</div>';
   try{
-    const d=await api({action:'getAll'});
+    const [d] = await Promise.all([
+      api({action:'getAll'}),
+      loadTemplates(),
+    ]);
     hw=d.homework||[];
     render();
   }catch(e){
@@ -618,13 +626,13 @@ function selTmplSubj(btn){
 }
 
 function renderTmplItems(){
-  const list=getTmpl().filter(function(t){ return t.subject===selTS; });
+  const list=tmplCache.filter(function(t){ return t.subject===selTS; });
   const el=document.getElementById('tmpl-item-list');
   if(!list.length){ el.innerHTML='<div style="font-size:13px;color:var(--text3);margin-bottom:8px">まだ登録がありません。下から追加してください。</div>'; return; }
   el.innerHTML=list.map(function(t,i){
     return '<div class="tmpl-item" data-i="'+i+'" onclick="selTmplItem(this,'+i+')">'
       +'<div class="tmpl-text"><div class="tmpl-name">'+esc(t.title)+'</div></div>'
-      +'<button class="tmpl-del" data-i="'+i+'" onclick="delTmpl(event,this.dataset.i)">×</button>'
+      +'<button class="tmpl-del" data-subj="'+esc(t.subject)+'" data-title="'+esc(t.title)+'" onclick="delTmpl(event,this)">×</button>'
       +'</div>';
   }).join('');
 }
@@ -635,25 +643,28 @@ function selTmplItem(el, i){
   document.getElementById('tmpl-add-btn-row').style.display='flex';
 }
 
-function addTemplate(){
+async function addTemplate(){
   const title=document.getElementById('tinput').value.trim();
   if(!selTS||!title){ toast('宿題名を入力してください'); return; }
-  const list=getTmpl();
-  list.push({subject:selTS,title});
-  saveTmpl(list);
-  document.getElementById('tinput').value='';
-  renderTmplItems();
-  toast('登録しました！');
+  try{
+    await api({action:'addTemplate', subject:selTS, title:title});
+    tmplCache.push({subject:selTS, title:title});
+    document.getElementById('tinput').value='';
+    renderTmplItems();
+    toast('登録しました！');
+  }catch(e){ toast('登録に失敗しました: '+e.message); }
 }
 
-function delTmpl(e,i){
+async function delTmpl(e, btn){
   e.stopPropagation();
-  const allList=getTmpl();
-  const subjList=allList.filter(function(t){return t.subject===selTS;});
-  const target=subjList[parseInt(i)];
-  const newList=allList.filter(function(t){return t!==target;});
-  saveTmpl(newList);
-  renderTmplItems();
+  const subject=btn.dataset.subj, title=btn.dataset.title;
+  try{
+    await api({action:'deleteTemplate', subject:subject, title:title});
+    tmplCache=tmplCache.filter(function(t){ return !(t.subject===subject && t.title===title); });
+    selTmplIdx=-1;
+    renderTmplItems();
+    document.getElementById('tmpl-add-btn-row').style.display='none';
+  }catch(e){ toast('削除に失敗しました'); }
 }
 
 async function useTmpl(){
@@ -661,7 +672,7 @@ async function useTmpl(){
   const due=document.getElementById('tmpl-due').value;
   const kai=document.getElementById('tmpl-kai').value.trim();
   if(!due){ toast('期日を入力してください'); return; }
-  const list=getTmpl().filter(function(t){return t.subject===selTS;});
+  const list=tmplCache.filter(function(t){return t.subject===selTS;});
   const t=list[selTmplIdx]; if(!t) return;
   closeAdd();
   try{
