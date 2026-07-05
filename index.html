@@ -220,8 +220,18 @@ function saveTmpl(a){ localStorage.setItem('tmpl', JSON.stringify(a)); }
 async function api(p){
   setSyn(true);
   try{
-    const r = await fetch(GAS+'?'+new URLSearchParams(p).toString());
-    const d = await r.json();
+    let r;
+    if(p.action === 'uploadPhoto'){
+      r = await fetch(GAS, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(p),
+      });
+    } else {
+      r = await fetch(GAS+'?'+new URLSearchParams(p).toString());
+    }
+    const text = await r.text();
+    const d = JSON.parse(text);
     if(d.error) throw new Error(d.error);
     setSyn(false); return d;
   }catch(e){ setSyn(false,true); throw e; }
