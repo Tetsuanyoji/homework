@@ -61,8 +61,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .bar{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
 .bar-fill{height:100%;border-radius:3px;transition:width .4s}
 .pct{font-size:11px;color:var(--text3);min-width:30px;text-align:right}
-.photo-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.thumb{width:58px;height:58px;border-radius:8px;border:1px solid var(--border);object-fit:cover;cursor:pointer}
+.photo-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:8px;padding-bottom:4px;scrollbar-width:none}
+.photo-row::-webkit-scrollbar{display:none}
+.thumb{width:80px;height:80px;border-radius:8px;border:1px solid var(--border);object-fit:cover;cursor:pointer;flex-shrink:0}
 .note{width:100%;font-size:12px;border:1px solid var(--border);border-radius:7px;padding:7px 9px;background:var(--surface1);color:var(--text2);resize:none;line-height:1.5;font-family:inherit}
 .note:focus{outline:none;border-color:var(--accent)}
 /* 親カード追加ボタン */
@@ -140,7 +141,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
       <span style="font-size:10px;color:var(--text3)"><span class="sync-dot" id="sdot"></span><span id="slbl">同期済み</span></span>
       <div class="view-toggle">
         <button class="view-btn active" id="vbtn-child" onclick="setView('child')">子ども</button>
-        <button class="view-btn" id="vbtn-parent" onclick="setView('parent')">親</button>
+        <button class="view-btn" id="vbtn-parent" onclick="askParentPin()">親</button>
       </div>
     </div>
   </div>
@@ -253,6 +254,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
   <button onclick="closePhoto()">閉じる</button>
 </div>
 
+
+<!-- 親PINモーダル -->
+<div class="overlay" id="pin-overlay" style="display:none">
+  <div class="sheet" style="padding-bottom:40px">
+    <div class="sheet-hdr"><h2>🔒 親モード</h2><button class="close-x" onclick="closePin()">×</button></div>
+    <p class="sheet-sub">暗証番号を入力してください</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin:16px 0 8px">
+      <input type="password" id="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*"
+        style="width:140px;text-align:center;font-size:28px;letter-spacing:10px;padding:10px;border:2px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);font-family:inherit"
+        onkeydown="if(event.key==='Enter') checkPin()">
+    </div>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:16px">初期PINは 1234 です</p>
+    <div class="btn-row">
+      <button class="btn" onclick="closePin()">キャンセル</button>
+      <button class="btn primary" onclick="checkPin()">入る</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <input type="file" id="finput" accept="image/*" capture="environment" style="display:none" onchange="onPhoto(event)">
 
@@ -352,9 +371,37 @@ function incOf(s){ return hw.filter(h=>h.subject===s&&!isDone(h)).length; }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(m){ const e=document.getElementById('toast'); e.textContent=m; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),2400); }
 
+// ── 親PIN ──
+const PARENT_PIN = '8610'; // ← 変更したい場合はここを書き換えてください
+let pinUnlocked = false;
+
+function askParentPin(){
+  if(pinUnlocked){ setView('parent'); return; }
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-overlay').style.display='flex';
+  setTimeout(function(){ document.getElementById('pin-input').focus(); }, 100);
+}
+function closePin(){
+  document.getElementById('pin-overlay').style.display='none';
+}
+function checkPin(){
+  const val = document.getElementById('pin-input').value;
+  if(val === PARENT_PIN){
+    pinUnlocked = true;
+    closePin();
+    setView('parent');
+  } else {
+    document.getElementById('pin-input').value='';
+    document.getElementById('pin-input').style.borderColor='var(--danger)';
+    setTimeout(function(){ document.getElementById('pin-input').style.borderColor='var(--border-strong)'; }, 1000);
+    toast('暗証番号が違います');
+  }
+}
+
 // ── レンダリング ──
 function setView(v){
   curView=v;
+  if(v==='child') pinUnlocked=false; // 子どもに戻ったらロック
   document.getElementById('vbtn-child').className='view-btn'+(v==='child'?' active':'');
   document.getElementById('vbtn-parent').className='view-btn'+(v==='parent'?' active':'');
   render();
