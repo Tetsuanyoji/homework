@@ -119,9 +119,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .spinner{text-align:center;padding:40px;color:var(--text3);font-size:13px}
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1}
-.photo-full{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-.photo-full img{max-width:94%;max-height:72vh;border-radius:10px}
-.photo-full button{color:#fff;background:rgba(255,255,255,.15);border:none;padding:10px 24px;border-radius:20px;cursor:pointer;font-size:14px}
+.photo-full{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.gallery-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center}
+.gallery-slide img{max-width:94vw;max-height:70vh;border-radius:10px;object-fit:contain}
+#gallery-track::-webkit-scrollbar{display:none}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;margin-right:4px}
 .sync-dot.ing{animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -248,10 +249,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
   </div>
 </div>
 
-<!-- 写真拡大 -->
+<!-- 写真拡大ギャラリー -->
 <div class="photo-full" id="photo-full" style="display:none">
-  <img id="full-img" src="" alt="">
-  <button onclick="closePhoto()">閉じる</button>
+  <div style="position:absolute;top:16px;right:16px;z-index:1">
+    <button onclick="closePhoto()" style="color:#fff;background:rgba(255,255,255,.15);border:none;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:14px">閉じる</button>
+  </div>
+  <div style="position:absolute;top:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:13px" id="photo-counter"></div>
+  <div id="gallery-track" style="display:flex;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch" onscroll="onGalleryScroll()"></div>
+  <div style="display:flex;justify-content:space-between;width:90%;max-width:400px;margin-top:8px">
+    <button onclick="galleryPrev()" style="color:#fff;background:rgba(255,255,255,.15);border:none;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:14px">‹ 前</button>
+    <button onclick="galleryNext()" style="color:#fff;background:rgba(255,255,255,.15);border:none;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:14px">次 ›</button>
+  </div>
 </div>
 
 
@@ -265,7 +273,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
         style="width:140px;text-align:center;font-size:28px;letter-spacing:10px;padding:10px;border:2px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);font-family:inherit"
         onkeydown="if(event.key==='Enter') checkPin()">
     </div>
-    <p style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:16px">初期PINは 1234 です</p>
     <div class="btn-row">
       <button class="btn" onclick="closePin()">キャンセル</button>
       <button class="btn primary" onclick="checkPin()">入る</button>
@@ -468,9 +475,11 @@ function cardC(h){
       +'<span class="step-label">'+st.l+'</span></button>';
   });
 
+  const photoUrls=(h.photos||[]).map(function(ph){return ph.driveUrl;});
+  const urlsJson=esc(JSON.stringify(photoUrls));
   let photos='';
-  (h.photos||[]).forEach(function(ph){
-    photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" onclick="openPhoto(this.dataset.url)" alt="写真">';
+  (h.photos||[]).forEach(function(ph,pi){
+    photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" data-urls="'+urlsJson+'" onclick="openPhoto(this.dataset.url,JSON.parse(this.dataset.urls))" alt="写真">';
   });
 
   return '<div class="hw-card'+(urg?' urgent':'')+'\">'
@@ -506,8 +515,10 @@ function cardP(h){
 
   let photos='';
   if((h.photos||[]).length){
-    (h.photos||[]).forEach(function(ph){
-      photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" onclick="openPhoto(this.dataset.url)" alt="写真">';
+    const pUrls=(h.photos||[]).map(function(ph){return ph.driveUrl;});
+    const pUrlsJson=esc(JSON.stringify(pUrls));
+    (h.photos||[]).forEach(function(ph,pi){
+      photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" data-urls="'+pUrlsJson+'" onclick="openPhoto(this.dataset.url,JSON.parse(this.dataset.urls))" alt="写真">';
     });
   } else { photos='<span style="font-size:12px;color:var(--text3)">写真なし</span>'; }
 
@@ -635,7 +646,59 @@ async function finishShoot(){
   }catch(e){ toast('保存に失敗しました'); }
   shootId=null; shootStep=null; shootPhotos=[];
 }
-function openPhoto(url){ document.getElementById('full-img').src=url; document.getElementById('photo-full').style.display='flex'; }
+// ── 写真ギャラリー ──
+let galleryUrls = [];
+let galleryIdx = 0;
+
+function openPhoto(url, urls){
+  // urlsが渡されなければ単体表示
+  galleryUrls = urls || [url];
+  galleryIdx = galleryUrls.indexOf(url);
+  if(galleryIdx < 0) galleryIdx = 0;
+  buildGallery();
+  document.getElementById('photo-full').style.display='flex';
+}
+
+function buildGallery(){
+  const track = document.getElementById('gallery-track');
+  track.innerHTML = galleryUrls.map(function(u){
+    return '<div class="gallery-slide"><img src="'+esc(u)+'" alt="写真"></div>';
+  }).join('');
+  // 対象インデックスにスクロール（即時）
+  setTimeout(function(){
+    track.scrollLeft = galleryIdx * track.offsetWidth;
+    updateCounter();
+  }, 0);
+}
+
+function onGalleryScroll(){
+  const track = document.getElementById('gallery-track');
+  galleryIdx = Math.round(track.scrollLeft / track.offsetWidth);
+  updateCounter();
+}
+
+function updateCounter(){
+  document.getElementById('photo-counter').textContent = (galleryIdx+1) + ' / ' + galleryUrls.length;
+}
+
+function galleryPrev(){
+  const track = document.getElementById('gallery-track');
+  if(galleryIdx > 0){
+    galleryIdx--;
+    track.scrollTo({left: galleryIdx * track.offsetWidth, behavior:'smooth'});
+    updateCounter();
+  }
+}
+
+function galleryNext(){
+  const track = document.getElementById('gallery-track');
+  if(galleryIdx < galleryUrls.length - 1){
+    galleryIdx++;
+    track.scrollTo({left: galleryIdx * track.offsetWidth, behavior:'smooth'});
+    updateCounter();
+  }
+}
+
 function closePhoto(){ document.getElementById('photo-full').style.display='none'; }
 
 // ── 宿題追加 ──
