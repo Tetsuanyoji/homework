@@ -31,14 +31,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
 .content{padding:12px}
 /* カード */
-.hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;border-left-width:5px;border-left-style:solid}
+.hw-card.hc-kokugo{border-left-color:#7c3aed}
+.hw-card.hc-sansu{border-left-color:#2563eb}
+.hw-card.hc-rika{border-left-color:#16a34a}
+.hw-card.hc-shakai{border-left-color:#d97706}
+.hw-card.hc-keisan{border-left-color:#db2777}
 .hw-card.urgent{border-color:var(--danger-border);background:var(--danger-bg)}
+.hw-card.urgent{border-left-width:5px}
 .card-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:11px}
 .subj{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0;margin-top:1px}
 .s-kokugo{background:#ede9fe;color:#5b21b6}
 .s-sansu{background:#dbeafe;color:#1d4ed8}
 .s-rika{background:#dcfce7;color:#166534}
 .s-shakai{background:#fef3c7;color:#92400e}
+.s-keisan{background:#fce7f3;color:#9d174d}
 .card-title-area{flex:1}
 .hw-name{font-size:14px;font-weight:600;line-height:1.3}
 .hw-kai{font-size:11px;color:var(--text3);margin-top:1px}
@@ -91,6 +98,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .subj-btn.sel.s-sansu{background:#2563eb}
 .subj-btn.sel.s-rika{background:#16a34a}
 .subj-btn.sel.s-shakai{background:#d97706}
+.subj-btn.sel.s-keisan{background:#db2777}
 .subj-btn.sel::after{content:" ✓";font-weight:900}
 .btn-row{display:flex;gap:8px;margin-top:18px}
 .btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
@@ -126,6 +134,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;margin-right:4px}
 .sync-dot.ing{animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* 週間ビュー */
+.week-day{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.week-day.today{border-color:var(--accent);border-width:2px;background:var(--accent-bg)}
+.week-day.past{opacity:.5}
+.week-day-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.week-day-name{font-size:14px;font-weight:700}
+.week-day-name.sat{color:#2563eb}
+.week-day-name.sun{color:#dc2626}
+.week-day-date{font-size:11px;color:var(--text3)}
+.week-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+.week-item.wdone{opacity:.5}
+.week-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.wd-kokugo{background:#7c3aed}.wd-sansu{background:#2563eb}.wd-rika{background:#16a34a}.wd-shakai{background:#d97706}.wd-keisan{background:#db2777}
+.week-item-title{flex:1}
+.week-item-status{font-size:11px;color:var(--text3)}
+.week-empty-day{font-size:12px;color:var(--text3);padding:2px 0}
 /* 撮影シート */
 .shoot-sheet{background:var(--surface);border-radius:18px 18px 0 0;width:100%;padding:24px 16px 36px}
 .shoot-thumbs{display:flex;gap:8px;flex-wrap:wrap;min-height:62px;margin-bottom:16px}
@@ -157,6 +181,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
   <div class="sheet" id="add-sheet">
     <div class="sheet-hdr"><h2>宿題を追加</h2><button class="close-x" onclick="closeAdd()">×</button></div>
     <p class="sheet-sub">よく使う宿題から選ぶか、直接入力してください</p>
+    <button class="btn" style="margin-bottom:10px;background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)" onclick="openBulk()">📦 今週分をまとめて登録する</button>
+
+    <div style="background:#fce7f3;border:1.5px solid #f9a8d4;border-radius:12px;padding:12px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#9d174d;margin-bottom:8px">🧮 計算（毎日分を自動登録）</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <span style="font-size:13px;color:#9d174d">第</span>
+        <input type="text" id="keisan-kai" inputmode="numeric" placeholder="17" style="width:70px;padding:9px;border:1px solid #f9a8d4;border-radius:8px;font-size:15px;text-align:center;font-family:inherit">
+        <span style="font-size:13px;color:#9d174d">回を</span>
+        <input type="date" id="keisan-start" style="flex:1;padding:9px;border:1px solid #f9a8d4;border-radius:8px;font-size:14px;font-family:inherit">
+        <span style="font-size:13px;color:#9d174d">から</span>
+      </div>
+      <button class="btn" style="width:100%;background:#db2777;color:#fff;border-color:#db2777" onclick="addKeisanWeek()">1〜7を毎日分登録する</button>
+    </div>
 
     <div class="sec-title">📋 よく使う宿題</div>
     <div class="sec-title" style="font-size:11px;color:var(--accent);margin-top:-4px">① 教科を選ぶ</div>
@@ -172,7 +209,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
     </div>
     <div class="field" style="margin-top:4px">
       <label>③ 回数（任意）</label>
-      <input type="text" id="tmpl-kai" placeholder="例：第12回">
+      <input type="text" id="tmpl-kai" inputmode="numeric" placeholder="例：12（第◯回）">
     </div>
     <div class="field">
       <label>④ 期日</label>
@@ -194,7 +231,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
     </div>
     <div class="field">
       <label>回数（任意）</label>
-      <input type="text" id="inp-kai" placeholder="例：第12回">
+      <input type="text" id="inp-kai" inputmode="numeric" placeholder="例：12（第◯回）">
     </div>
     <div class="field">
       <label>期日</label>
@@ -221,7 +258,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
     </div>
     <div class="field">
       <label>回数（任意）</label>
-      <input type="text" id="edit-kai" placeholder="例：第12回">
+      <input type="text" id="edit-kai" inputmode="numeric" placeholder="例：12（第◯回）">
     </div>
     <div class="field">
       <label>期日</label>
@@ -279,6 +316,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
     </div>
   </div>
 </div>
+
+<!-- 一括登録モーダル -->
+<div class="overlay" id="bulk-overlay" style="display:none">
+  <div class="sheet">
+    <div class="sheet-hdr"><h2>📦 今週分をまとめて登録</h2><button class="close-x" onclick="closeBulk()">×</button></div>
+    <p class="sheet-sub">教科ごとに宿題名と期日を入れて、まとめて追加できます。空欄の教科はスキップされます。</p>
+    <div class="field">
+      <label>回数（全教科共通・任意）</label>
+      <input type="text" id="bulk-kai" inputmode="numeric" placeholder="例：12（第◯回）">
+    </div>
+    <div id="bulk-rows"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="closeBulk()">キャンセル</button>
+      <button class="btn primary" onclick="submitBulk()">まとめて追加</button>
+    </div>
+  </div>
+</div>
+<input type="date" id="quick-due-input" style="position:fixed;opacity:0;pointer-events:none;left:-9999px">
+<canvas id="confetti-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:600;display:none"></canvas>
 <div class="toast" id="toast"></div>
 <input type="file" id="finput" accept="image/*" capture="environment" style="display:none" onchange="onPhoto(event)">
 
@@ -290,6 +346,7 @@ const SUBJS = [
   {k:'sansu',  l:'算数', c:'s-sansu'},
   {k:'rika',   l:'理科', c:'s-rika'},
   {k:'shakai', l:'社会', c:'s-shakai'},
+  {k:'keisan', l:'計算', c:'s-keisan'},
 ];
 
 // ステップ定義（④親確認を追加）
@@ -300,7 +357,7 @@ const STEPS = [
   {k:'parent',l:'④親確認',   icon:'👀', photo:false, parentOnly:true},
 ];
 
-const TABS = ['全て','国語','算数','理科','社会','完了'];
+const TABS = ['📅週間','全て','国語','算数','理科','社会','計算','完了'];
 
 let hw = [], curView = 'child', curTab = 0;
 let selS = '', selTS = '', selTmplIdx = -1;
@@ -365,6 +422,17 @@ function daysLeft(due){
   const t=new Date(new Date().toISOString().slice(0,10)), d=new Date(due);
   return Math.ceil((d-t)/86400000);
 }
+const WEEKDAYS=['日','月','火','水','木','金','土'];
+function dueLabel(due){
+  const dl=daysLeft(due);
+  const d=new Date(due);
+  const wd=WEEKDAYS[d.getDay()];
+  if(dl<0) return Math.abs(dl)+'日過ぎた！';
+  if(dl===0) return '今日('+wd+')まで！';
+  if(dl===1) return '明日('+wd+')まで';
+  if(dl<=7) return wd+'曜まで（あと'+dl+'日）';
+  return (d.getMonth()+1)+'/'+d.getDate()+'('+wd+')まで';
+}
 function isDone(h){ return h.steps.solve&&h.steps.check&&h.steps.redo&&h.steps.parent; }
 function pct(h){ return Math.round(Object.values(h.steps).filter(Boolean).length/4*100); }
 function nxt(h){
@@ -416,22 +484,26 @@ function setView(v){
 function setTab(i){ curTab=i; render(); }
 
 function filtered(){
-  const sm=['','kokugo','sansu','rika','shakai',''];
+  // tab: 0=週間, 1=全て, 2-6=教科（計算含む）, 7=完了
+  const sm=['','','kokugo','sansu','rika','shakai','keisan',''];
   return hw.filter(h=>{
-    if(curTab===0) return !isDone(h);
-    if(curTab===5) return isDone(h);
+    if(curTab===1) return !isDone(h);
+    if(curTab===7) return isDone(h);
     return h.subject===sm[curTab]&&!isDone(h);
   });
 }
 
 function render(){
   document.getElementById('tabs').innerHTML=TABS.map((t,i)=>{
-    const sm=['','kokugo','sansu','rika','shakai',''];
+    const sm=['','','kokugo','sansu','rika','shakai','keisan',''];
     let b='';
-    if(i===0){ const c=hw.filter(h=>!isDone(h)).length; if(c) b='<span class="badge">'+c+'</span>'; }
-    else if(i<5){ const c=incOf(sm[i]); if(c) b='<span class="badge">'+c+'</span>'; }
+    if(i===1){ const c=hw.filter(h=>!isDone(h)).length; if(c) b='<span class="badge">'+c+'</span>'; }
+    else if(i>=2&&i<=6){ const c=incOf(sm[i]); if(c) b='<span class="badge">'+c+'</span>'; }
     return '<button class="tab'+(curTab===i?' active':'')+'" onclick="setTab('+i+')">'+t+b+'</button>';
   }).join('');
+
+  // 週間ビュー
+  if(curTab===0){ renderWeekly(); return; }
 
   const list=filtered();
   let html='';
@@ -443,17 +515,76 @@ function render(){
       +'</div>';
   }
   if(!list.length){
-    html+='<div class="empty"><div style="font-size:40px;margin-bottom:8px">🎉</div>この教科の宿題は全部終わった！</div>';
+    html+='<div class="empty"><div style="font-size:40px;margin-bottom:8px">🎉</div>'+(curTab===7?'完了した宿題はまだありません':'宿題は全部終わった！')+'</div>';
   } else {
     list.forEach(h=>{ html+=curView==='parent'?cardP(h):cardC(h); });
   }
   document.getElementById('main').innerHTML=html;
 }
 
+function renderWeekly(){
+  const today=new Date(new Date().toISOString().slice(0,10));
+  const todayStr=today.toISOString().slice(0,10);
+  // 今日から14日分を表示
+  let html='<div style="font-size:12px;color:var(--text3);margin-bottom:10px">📅 今週やる宿題（期日ごと）</div>';
+  const byDate={};
+  hw.forEach(function(h){
+    if(!byDate[h.due]) byDate[h.due]=[];
+    byDate[h.due].push(h);
+  });
+  // 過去の未完了もまとめて先頭に
+  const overdue=hw.filter(function(h){ return daysLeft(h.due)<0 && !isDone(h); });
+  if(overdue.length){
+    html+='<div class="week-day" style="border-color:var(--danger-border);background:var(--danger-bg)">';
+    html+='<div class="week-day-hdr"><span class="week-day-name" style="color:var(--danger)">⚠️ 期限切れ</span></div>';
+    overdue.forEach(function(h){ html+=weekItem(h); });
+    html+='</div>';
+  }
+  for(let i=0;i<14;i++){
+    const d=new Date(today); d.setDate(d.getDate()+i);
+    const ds=d.toISOString().slice(0,10);
+    const items=(byDate[ds]||[]).filter(function(h){ return daysLeft(h.due)>=0; });
+    const wd=d.getDay();
+    const isToday=ds===todayStr;
+    let cls='week-day'; if(isToday) cls+=' today';
+    let nameCls='week-day-name'; if(wd===6) nameCls+=' sat'; if(wd===0) nameCls+=' sun';
+    html+='<div class="'+cls+'">';
+    html+='<div class="week-day-hdr">';
+    html+='<span class="'+nameCls+'">'+WEEKDAYS[wd]+'曜日'+(isToday?' (今日)':i===1?' (明日)':'')+'</span>';
+    html+='<span class="week-day-date">'+(d.getMonth()+1)+'/'+d.getDate()+'</span>';
+    html+='</div>';
+    if(items.length){
+      items.forEach(function(h){ html+=weekItem(h); });
+    } else {
+      html+='<div class="week-empty-day">宿題なし</div>';
+    }
+    html+='</div>';
+  }
+  document.getElementById('main').innerHTML=html;
+}
+
+function weekItem(h){
+  const sub=SUBJS.find(s=>s.k===h.subject)||SUBJS[0];
+  const done=isDone(h);
+  const p=pct(h);
+  let status;
+  if(done) status='✅ 完了';
+  else{
+    const ns=nxt(h);
+    const nsLabel={solve:'①解く',check:'②丸付け',redo:'③解き直し',parent:'親確認待ち'}[ns];
+    status=p+'% ('+nsLabel+')';
+  }
+  return '<div class="week-item'+(done?' wdone':'')+'">'
+    +'<span class="week-dot wd-'+h.subject+'"></span>'
+    +'<span class="week-item-title">'+esc(h.title)+(h.kai?' <span style="color:var(--text3)">第'+esc(h.kai)+'回</span>':'')+'</span>'
+    +'<span class="week-item-status">'+status+'</span>'
+    +'</div>';
+}
+
 function cardC(h){
   const sub=SUBJS.find(s=>s.k===h.subject)||SUBJS[0];
   const dl=daysLeft(h.due);
-  const ds=dl<0?Math.abs(dl)+'日過ぎた！':dl===0?'今日が期日！':'あと'+dl+'日';
+  const ds=dueLabel(h.due);
   const urg=dl<=1&&!isDone(h);
   const p=pct(h), ns=nxt(h);
 
@@ -482,11 +613,11 @@ function cardC(h){
     photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" data-urls="'+urlsJson+'" onclick="openPhoto(this.dataset.url,JSON.parse(this.dataset.urls))" alt="写真">';
   });
 
-  return '<div class="hw-card'+(urg?' urgent':'')+'\">'
+  return '<div class="hw-card hc-'+h.subject+(urg?' urgent':'')+'\">'
     +'<div class="card-top">'
     +'<span class="subj '+sub.c+'">'+sub.l+'</span>'
     +'<div class="card-title-area"><div class="hw-name">'+esc(h.title)+'</div>'+(h.kai?'<div class="hw-kai">'+esc(h.kai)+'</div>':'')+'</div>'
-    +'<span class="due'+(urg?' urgent':'')+'">'+ds+'</span>'
+    +'<span class="due'+(urg?' urgent':'')+'" data-id="'+h.id+'" onclick="quickEditDue(this.dataset.id)" style="cursor:pointer">'+ds+' ✎</span>'
     +'</div>'
     +'<div class="steps">'+steps+'</div>'
     +'<div class="bar-row"><div class="bar"><div class="bar-fill" style="width:'+p+'%;background:'+(p===100?'var(--success)':'var(--accent)')+'"></div></div><span class="pct">'+p+'%</span></div>'
@@ -498,7 +629,7 @@ function cardC(h){
 function cardP(h){
   const sub=SUBJS.find(s=>s.k===h.subject)||SUBJS[0];
   const dl=daysLeft(h.due);
-  const ds=dl<0?Math.abs(dl)+'日超過':'期日: '+h.due;
+  const ds=dueLabel(h.due);
   const urg=dl<=1&&!isDone(h);
   const p=pct(h);
 
@@ -522,11 +653,11 @@ function cardP(h){
     });
   } else { photos='<span style="font-size:12px;color:var(--text3)">写真なし</span>'; }
 
-  return '<div class="hw-card'+(urg?' urgent':'')+'\">'
+  return '<div class="hw-card hc-'+h.subject+(urg?' urgent':'')+'\">'
     +'<div class="card-top">'
     +'<span class="subj '+sub.c+'">'+sub.l+'</span>'
     +'<div class="card-title-area"><div class="hw-name">'+esc(h.title)+'</div>'+(h.kai?'<div class="hw-kai">'+esc(h.kai)+'</div>':'')+'</div>'
-    +'<span class="due'+(urg?' urgent':'')+'">'+ds+'</span>'
+    +'<span class="due'+(urg?' urgent':'')+'" data-id="'+h.id+'" onclick="quickEditDue(this.dataset.id)" style="cursor:pointer">'+ds+' ✎</span>'
     +'</div>'
     +'<div class="steps">'+steps+'</div>'
     +'<div class="bar-row"><div class="bar"><div class="bar-fill" style="width:'+p+'%;background:'+(p===100?'var(--success)':'var(--accent)')+'"></div></div><span class="pct">'+(p===100?'完了':p+'%')+'</span></div>'
@@ -556,7 +687,7 @@ async function tapStep(btn){
   try{
     await api({action:'updateStep',id,step,value:'true'});
     if(step==='redo') toast('③解き直し完了！あとは親に確認してもらおう👀');
-    else if(isDone(h)) toast('🎉 全部終わった！');
+    else if(isDone(h)){ fireConfetti(); toast('🎉 全部終わった！すごい！'); }
   }catch(e){ toast('保存に失敗しました: '+e.message); }
 }
 
@@ -568,7 +699,7 @@ async function tapStepParent(btn){
   render();
   try{
     await api({action:'updateStep',id,step,value:String(h.steps[step])});
-    if(isDone(h)) toast('✅ 全ステップ完了！');
+    if(isDone(h)){ fireConfetti(); toast('✅ 全ステップ完了！'); }
   }catch(e){ toast('保存に失敗しました'); }
 }
 
@@ -641,7 +772,7 @@ async function finishShoot(){
   try{
     await api({action:'updateStep',id,step,value:'true'});
     if(step==='redo') toast('③解き直し完了！あとは親に確認してもらおう👀');
-    else if(h&&isDone(h)) toast('🎉 全部終わった！');
+    else if(h&&isDone(h)){ fireConfetti(); toast('🎉 全部終わった！すごい！'); }
     else toast('✅ '+STEPS.find(x=>x.k===step).l+' 完了！');
   }catch(e){ toast('保存に失敗しました'); }
   shootId=null; shootStep=null; shootPhotos=[];
@@ -710,6 +841,8 @@ function openAdd(){
   document.getElementById('tmpl-kai').value='';
   document.getElementById('inp-due').value=d.toISOString().slice(0,10);
   document.getElementById('tmpl-due').value=d.toISOString().slice(0,10);
+  document.getElementById('keisan-kai').value='';
+  document.getElementById('keisan-start').value=new Date().toISOString().slice(0,10);
   document.getElementById('tmpl-item-area').style.display='none';
   document.getElementById('tmpl-add-btn-row').style.display='none';
   document.getElementById('sgrid').innerHTML=SUBJS.map(function(s){
@@ -834,6 +967,122 @@ async function submitEdit(){
     if(h){ h.subject=editSelS; h.title=title; h.kai=kai; h.due=due; }
     render(); toast('更新しました！');
   }catch(e){ toast('更新に失敗しました: '+e.message); }
+}
+
+// ── 一括登録 ──
+function openBulk(){
+  const d=new Date(); d.setDate(d.getDate()+3);
+  const defaultDue=d.toISOString().slice(0,10);
+  document.getElementById('bulk-kai').value='';
+  document.getElementById('bulk-rows').innerHTML=SUBJS.map(function(s){
+    return '<div class="field" style="border-left:4px solid '+subjColor(s.k)+';padding-left:10px">'
+      +'<label style="font-weight:700;color:'+subjColor(s.k)+'">'+s.l+'</label>'
+      +'<input type="text" id="bulk-title-'+s.k+'" placeholder="宿題名（空欄ならスキップ）" style="margin-bottom:6px">'
+      +'<input type="date" id="bulk-due-'+s.k+'" value="'+defaultDue+'">'
+      +'</div>';
+  }).join('');
+  document.getElementById('bulk-overlay').style.display='flex';
+}
+function closeBulk(){ document.getElementById('bulk-overlay').style.display='none'; }
+function subjColor(k){ return {kokugo:'#7c3aed',sansu:'#2563eb',rika:'#16a34a',shakai:'#d97706',keisan:'#db2777'}[k]||'#2563eb'; }
+
+async function submitBulk(){
+  const kai=document.getElementById('bulk-kai').value.trim();
+  const toAdd=[];
+  SUBJS.forEach(function(s){
+    const title=document.getElementById('bulk-title-'+s.k).value.trim();
+    const due=document.getElementById('bulk-due-'+s.k).value;
+    if(title&&due){ toAdd.push({subject:s.k,title:title,kai:kai,due:due}); }
+  });
+  if(!toAdd.length){ toast('1教科以上入力してください'); return; }
+  closeBulk(); closeAdd();
+  toast('登録中…');
+  try{
+    for(const item of toAdd){
+      const r=await api({action:'addHomework',subject:item.subject,title:item.title,kai:item.kai,due:item.due});
+      hw.unshift({id:String(r.id),subject:item.subject,title:item.title,kai:item.kai,due:item.due,steps:{solve:false,check:false,redo:false,parent:false},photos:[],note:''});
+    }
+    curTab=1; render();
+    toast(toAdd.length+'件の宿題を追加しました！');
+  }catch(e){ toast('追加に失敗しました: '+e.message); }
+}
+
+// ── 計算 毎日分の自動登録 ──
+async function addKeisanWeek(){
+  const kai=document.getElementById('keisan-kai').value.trim();
+  const start=document.getElementById('keisan-start').value;
+  if(!kai||!start){ toast('回数と開始日を入力してください'); return; }
+  if(!/^[0-9]+$/.test(kai)){ toast('回数は数字で入力してください'); return; }
+  closeAdd();
+  toast('登録中…');
+  try{
+    for(let i=1;i<=7;i++){
+      const d=new Date(start);
+      d.setDate(d.getDate()+(i-1));
+      const due=d.toISOString().slice(0,10);
+      const title='計算 '+kai+'-'+i;
+      const r=await api({action:'addHomework',subject:'keisan',title:title,kai:kai,due:due});
+      hw.unshift({id:String(r.id),subject:'keisan',title:title,kai:kai,due:due,steps:{solve:false,check:false,redo:false,parent:false},photos:[],note:''});
+    }
+    // 期日順に並べ直し
+    hw.sort(function(a,b){ return a.due<b.due?-1:a.due>b.due?1:0; });
+    curTab=6; render();
+    toast('計算 '+kai+'-1〜7 を登録しました！');
+  }catch(e){ toast('登録に失敗しました: '+e.message); }
+}
+
+// ── 期日クイック編集 ──
+let quickDueId=null;
+function quickEditDue(id){
+  quickDueId=id;
+  const h=hw.find(x=>x.id===id); if(!h) return;
+  const inp=document.getElementById('quick-due-input');
+  inp.value=h.due;
+  inp.onchange=async function(){
+    const newDue=inp.value;
+    if(!newDue||!quickDueId) return;
+    const hh=hw.find(x=>x.id===quickDueId); if(!hh) return;
+    hh.due=newDue; render();
+    try{ await api({action:'editHomework',id:quickDueId,subject:hh.subject,title:hh.title,kai:hh.kai||'',due:newDue}); toast('期日を変更しました'); }
+    catch(e){ toast('変更に失敗しました'); }
+    quickDueId=null;
+  };
+  // iOSでもピッカーを開く
+  if(inp.showPicker){ inp.showPicker(); } else { inp.click(); }
+}
+
+// ── 完了時の紙吹雪 ──
+function fireConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  canvas.style.display='block';
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const colors=['#2563eb','#16a34a','#d97706','#7c3aed','#dc2626','#f59e0b'];
+  const pieces=[];
+  for(let i=0;i<120;i++){
+    pieces.push({
+      x:Math.random()*canvas.width,
+      y:-20-Math.random()*canvas.height*0.3,
+      w:6+Math.random()*6, h:8+Math.random()*8,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      vy:2+Math.random()*4, vx:-2+Math.random()*4,
+      rot:Math.random()*Math.PI, vr:-0.2+Math.random()*0.4,
+    });
+  }
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frame++;
+    if(frame<150){ requestAnimationFrame(draw); }
+    else { canvas.style.display='none'; }
+  }
+  draw();
 }
 
 load();
