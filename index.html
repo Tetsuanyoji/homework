@@ -351,7 +351,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
     </div>
   </div>
 </div>
-<input type="date" id="quick-due-input" style="position:fixed;opacity:0;pointer-events:none;left:-9999px">
+<div class="overlay" id="quickdue-overlay" style="display:none;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border-radius:16px;padding:20px;width:88%;max-width:320px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:4px">📅 期日を変更</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px" id="quickdue-name"></div>
+    <input type="date" id="quick-due-input" style="width:100%;padding:12px;border:1px solid var(--border-strong);border-radius:10px;font-size:16px;font-family:inherit">
+    <div class="btn-row">
+      <button class="btn" onclick="closeQuickDue()">キャンセル</button>
+      <button class="btn primary" onclick="saveQuickDue()">変更する</button>
+    </div>
+  </div>
+</div>
 <canvas id="confetti-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:600;display:none"></canvas>
 <div class="toast" id="toast"></div>
 <input type="file" id="finput" accept="image/*" capture="environment" style="display:none" onchange="onPhoto(event)">
@@ -1164,21 +1174,26 @@ async function addKeisanWeek(){
 // ── 期日クイック編集 ──
 let quickDueId=null;
 function quickEditDue(id){
-  quickDueId=id;
   const h=hw.find(x=>x.id===id); if(!h) return;
-  const inp=document.getElementById('quick-due-input');
-  inp.value=h.due;
-  inp.onchange=async function(){
-    const newDue=inp.value;
-    if(!newDue||!quickDueId) return;
-    const hh=hw.find(x=>x.id===quickDueId); if(!hh) return;
-    hh.due=newDue; render();
-    try{ await api({action:'editHomework',id:quickDueId,subject:hh.subject,title:hh.title,kai:hh.kai||'',due:newDue}); toast('期日を変更しました'); }
-    catch(e){ toast('変更に失敗しました'); }
-    quickDueId=null;
-  };
-  // iOSでもピッカーを開く
-  if(inp.showPicker){ inp.showPicker(); } else { inp.click(); }
+  quickDueId=id;
+  document.getElementById('quickdue-name').textContent=h.title+(h.kai?'（第'+h.kai+'回）':'');
+  document.getElementById('quick-due-input').value=normDate(h.due);
+  document.getElementById('quickdue-overlay').style.display='flex';
+}
+function closeQuickDue(){
+  document.getElementById('quickdue-overlay').style.display='none';
+  quickDueId=null;
+}
+async function saveQuickDue(){
+  const newDue=document.getElementById('quick-due-input').value;
+  if(!newDue){ toast('日付を選んでください'); return; }
+  const hh=hw.find(x=>x.id===quickDueId); if(!hh){ closeQuickDue(); return; }
+  hh.due=newDue;
+  closeQuickDue();
+  hw.sort(function(a,b){ return a.due<b.due?-1:a.due>b.due?1:0; });
+  render();
+  try{ await api({action:'editHomework',id:hh.id,subject:hh.subject,title:hh.title,kai:hh.kai||'',due:newDue}); toast('期日を変更しました'); }
+  catch(e){ toast('変更に失敗しました'); }
 }
 
 // ── 完了時の紙吹雪 ──
