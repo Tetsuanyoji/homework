@@ -39,7 +39,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .tab-shakai.active{color:#16a34a;border-bottom-color:#16a34a}
 .tab-keisan.active{color:#0ea5e9;border-bottom-color:#0ea5e9}
 .badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
-.content{padding:12px}
+.content{padding:12px;min-height:70vh}
 /* カード */
 .hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;border-left-width:5px;border-left-style:solid}
 .hw-card.hc-kokugo{border-left-color:#dc2626}
@@ -560,7 +560,7 @@ function setTab(i){
 // ── スワイプでタブ切り替え ──
 let touchStartX=0, touchStartY=0, touchStartT=0, touchActive=false;
 function initSwipe(){
-  const target=document.querySelector('.app');
+  const target=document;
   target.addEventListener('touchstart',function(e){
     if(e.touches.length!==1){ touchActive=false; return; }
     // 横スクロール要素（タブバー・写真ギャラリー・写真行）の上では無効
