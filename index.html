@@ -558,24 +558,32 @@ function setTab(i){
 }
 
 // ── スワイプでタブ切り替え ──
-let touchStartX=0, touchStartY=0, touchActive=false;
+let touchStartX=0, touchStartY=0, touchStartT=0, touchActive=false;
 function initSwipe(){
-  const main=document.getElementById('main');
-  main.addEventListener('touchstart',function(e){
-    if(e.touches.length!==1) return;
+  const target=document.querySelector('.app');
+  target.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1){ touchActive=false; return; }
+    // 横スクロール要素（タブバー・写真ギャラリー・写真行）の上では無効
+    if(e.target.closest('.tab-bar, #gallery-track, .photo-row, .gallery-slide')){ touchActive=false; return; }
     touchStartX=e.touches[0].clientX;
     touchStartY=e.touches[0].clientY;
+    touchStartT=Date.now();
     touchActive=true;
   },{passive:true});
-  main.addEventListener('touchend',function(e){
+  target.addEventListener('touchend',function(e){
     if(!touchActive) return;
     touchActive=false;
-    const dx=e.changedTouches[0].clientX-touchStartX;
-    const dy=e.changedTouches[0].clientY-touchStartY;
-    // 横移動が縦移動より十分大きいときだけ反応
-    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.5) return;
     // モーダルが開いているときは無効
     if(document.querySelector('.overlay[style*="flex"]')) return;
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    const dy=e.changedTouches[0].clientY-touchStartY;
+    const dt=Date.now()-touchStartT;
+    const absX=Math.abs(dx), absY=Math.abs(dy);
+    // 横方向がメイン かつ 距離40px以上 または 素早いフリック
+    const isHorizontal=absX>absY;
+    const farEnough=absX>40;
+    const quickFlick=dt<300 && absX>25;
+    if(!isHorizontal || (!farEnough && !quickFlick)) return;
     if(dx<0) setTab(curTab+1); // 左スワイプ→次のタブ
     else setTab(curTab-1);     // 右スワイプ→前のタブ
   },{passive:true});
