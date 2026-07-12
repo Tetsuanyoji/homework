@@ -171,6 +171,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 </style>
 </head>
 <body>
+<div id="ptr-indicator" style="position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-60px);z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--text2);box-shadow:0 2px 8px rgba(0,0,0,.1);transition:transform .1s;display:flex;align-items:center;gap:6px">
+  <span id="ptr-icon" style="display:inline-block;transition:transform .2s">↓</span><span id="ptr-text">引っ張って更新</span>
+</div>
 <div class="app">
   <div class="header">
     <h1>📚 早稲アカ 宿題</h1>
@@ -455,8 +458,8 @@ function setSyn(on,err){
   else{ dot.className='sync-dot'; dot.style.background=''; lbl.textContent='同期済み'; }
 }
 
-async function load(){
-  document.getElementById('main').innerHTML='<div class="spinner">読み込み中…</div>';
+async function load(silent){
+  if(!silent) document.getElementById('main').innerHTML='<div class="spinner">読み込み中…</div>';
   try{
     const [d] = await Promise.all([
       api({action:'getAll'}),
@@ -466,7 +469,8 @@ async function load(){
     hw=(d.homework||[]).map(function(h){ h.due=normDate(h.due); return h; });
     render();
   }catch(e){
-    document.getElementById('main').innerHTML='<div class="empty">⚠️ 読み込めませんでした<br><small>'+e.message+'</small></div>';
+    if(!silent) document.getElementById('main').innerHTML='<div class="empty">⚠️ 読み込めませんでした<br><small>'+e.message+'</small></div>';
+    else toast('更新に失敗しました');
   }
 }
 
@@ -1346,7 +1350,61 @@ function fireConfetti(){
   draw();
 }
 
+// ── プルダウン更新 ──
+function initPullToRefresh(){
+  let startY=0, pulling=false, pullDist=0;
+  const ind=document.getElementById('ptr-indicator');
+  const icon=document.getElementById('ptr-icon');
+  const text=document.getElementById('ptr-text');
+  const THRESHOLD=70;
+
+  document.addEventListener('touchstart',function(e){
+    // 最上部にいるときだけ有効
+    if(window.scrollY>5) { pulling=false; return; }
+    if(e.touches.length!==1){ pulling=false; return; }
+    if(document.querySelector('.overlay[style*="flex"]')){ pulling=false; return; }
+    startY=e.touches[0].clientY;
+    pulling=true;
+  },{passive:true});
+
+  document.addEventListener('touchmove',function(e){
+    if(!pulling) return;
+    pullDist=e.touches[0].clientY-startY;
+    if(pullDist<=0){ ind.style.transform='translateX(-50%) translateY(-60px)'; return; }
+    // 引っ張り量に応じてインジケーターを下ろす（減衰あり）
+    const shown=Math.min(pullDist*0.5, 80);
+    ind.style.transform='translateX(-50%) translateY('+(shown-10)+'px)';
+    if(pullDist>THRESHOLD){
+      icon.style.transform='rotate(180deg)';
+      text.textContent='離して更新';
+    } else {
+      icon.style.transform='rotate(0deg)';
+      text.textContent='引っ張って更新';
+    }
+  },{passive:true});
+
+  document.addEventListener('touchend',async function(){
+    if(!pulling) return;
+    pulling=false;
+    if(pullDist>THRESHOLD){
+      ind.style.transform='translateX(-50%) translateY(12px)';
+      icon.textContent='⟳';
+      icon.style.transform='rotate(0deg)';
+      text.textContent='更新中…';
+      await load(true);
+      icon.textContent='↓';
+      text.textContent='引っ張って更新';
+      ind.style.transform='translateX(-50%) translateY(-60px)';
+      toast('最新の状態に更新しました');
+    } else {
+      ind.style.transform='translateX(-50%) translateY(-60px)';
+    }
+    pullDist=0;
+  },{passive:true});
+}
+
 initSwipe();
+initPullToRefresh();
 load();
 </script>
 </body>
