@@ -28,6 +28,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .tab-bar::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;padding:10px 14px;font-size:12px;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-kokugo{background:#f5f3ff}
+.tab-sansu{background:#eff6ff}
+.tab-rika{background:#f0fdf4}
+.tab-shakai{background:#fffbeb}
+.tab-keisan{background:#fdf2f8}
+.tab-kokugo.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.tab-sansu.active{color:#2563eb;border-bottom-color:#2563eb}
+.tab-rika.active{color:#16a34a;border-bottom-color:#16a34a}
+.tab-shakai.active{color:#d97706;border-bottom-color:#d97706}
+.tab-keisan.active{color:#db2777;border-bottom-color:#db2777}
 .badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
 .content{padding:12px}
 /* カード */
@@ -129,8 +139,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1}
 .photo-full{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
-.gallery-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center}
-.gallery-slide img{max-width:94vw;max-height:70vh;border-radius:10px;object-fit:contain}
+.gallery-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;overflow:auto;-webkit-overflow-scrolling:touch}
+.gallery-slide img{max-width:94vw;max-height:70vh;border-radius:10px;object-fit:contain;cursor:zoom-in;transition:transform .2s;transform-origin:center}
+.gallery-slide img.zoomed{max-width:none;max-height:none;width:180vw;cursor:zoom-out}
 #gallery-track::-webkit-scrollbar{display:none}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;margin-right:4px}
 .sync-dot.ing{animation:pulse 1s infinite}
@@ -352,6 +363,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
     </div>
   </div>
 </div>
+
+<!-- 週間ビュー ステータス更新ポップアップ -->
+<div class="overlay" id="week-popup-overlay" style="display:none;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border-radius:16px;padding:20px;width:90%;max-width:340px">
+    <div class="sheet-hdr"><h2 id="wp-title" style="font-size:16px">宿題</h2><button class="close-x" onclick="closeWeekPopup()">×</button></div>
+    <div id="wp-sub" style="font-size:12px;color:var(--text3);margin-bottom:16px"></div>
+    <div class="steps" id="wp-steps" style="margin-bottom:16px"></div>
+    <div id="wp-photos" class="photo-row" style="margin-bottom:12px"></div>
+    <button class="btn" style="width:100%" onclick="closeWeekPopup()">閉じる</button>
+  </div>
+</div>
 <div class="overlay" id="quickdue-overlay" style="display:none;align-items:center;justify-content:center">
   <div style="background:var(--surface);border-radius:16px;padding:20px;width:88%;max-width:320px">
     <div style="font-size:15px;font-weight:700;margin-bottom:4px">📅 期日を変更</div>
@@ -543,7 +565,8 @@ function render(){
     let b='';
     if(i===1){ const c=hw.filter(h=>!isDone(h)).length; if(c) b='<span class="badge">'+c+'</span>'; }
     else if(i>=2&&i<=6){ const c=incOf(sm[i]); if(c) b='<span class="badge">'+c+'</span>'; }
-    return '<button class="tab'+(curTab===i?' active':'')+'" onclick="setTab('+i+')">'+t+b+'</button>';
+    const subjCls=['','','tab-kokugo','tab-sansu','tab-rika','tab-shakai','tab-keisan',''][i]||'';
+    return '<button class="tab '+subjCls+(curTab===i?' active':'')+'" onclick="setTab('+i+')">'+t+b+'</button>';
   }).join('');
 
   // 週間ビュー
@@ -618,10 +641,10 @@ function weekItem(h){
     const nsLabel={solve:'①解く',check:'②丸付け',redo:'③解き直し',parent:'親確認待ち'}[ns];
     status=p+'% ('+nsLabel+')';
   }
-  return '<div class="week-item'+(done?' wdone':'')+'">'
+  return '<div class="week-item'+(done?' wdone':'')+'" data-id="'+h.id+'" onclick="openWeekPopup(this.dataset.id)" style="cursor:pointer">'
     +'<span class="week-dot wd-'+h.subject+'"></span>'
     +'<span class="week-item-title">'+esc(h.title)+(h.kai?' <span style="color:var(--text3)">第'+esc(h.kai)+'回</span>':'')+'</span>'
-    +'<span class="week-item-status">'+status+'</span>'
+    +'<span class="week-item-status">'+status+' ›</span>'
     +'</div>';
 }
 
@@ -730,8 +753,8 @@ async function tapStep(btn){
   h.steps[step]=true; render();
   try{
     await api({action:'updateStep',id,step,value:'true'});
-    if(step==='redo') toast('③解き直し完了！あとは親に確認してもらおう👀');
-    else if(isDone(h)){ fireConfetti(); toast('🎉 全部終わった！すごい！'); }
+    if(step==='redo'){ fireConfetti(); toast('③解き直し完了！よくがんばったね🎉 あとは親に確認してもらおう👀'); }
+    else if(isDone(h)){ toast('🎉 全部終わった！すごい！'); }
   }catch(e){ toast('保存に失敗しました: '+e.message); }
 }
 
@@ -743,7 +766,7 @@ async function tapStepParent(btn){
   render();
   try{
     await api({action:'updateStep',id,step,value:String(h.steps[step])});
-    if(isDone(h)){ fireConfetti(); toast('✅ 全ステップ完了！'); }
+    if(isDone(h)){ toast('✅ 全ステップ完了！'); }
   }catch(e){ toast('保存に失敗しました'); }
 }
 
@@ -815,8 +838,8 @@ async function finishShoot(){
   render();
   try{
     await api({action:'updateStep',id,step,value:'true'});
-    if(step==='redo') toast('③解き直し完了！あとは親に確認してもらおう👀');
-    else if(h&&isDone(h)){ fireConfetti(); toast('🎉 全部終わった！すごい！'); }
+    if(step==='redo'){ fireConfetti(); toast('③解き直し完了！よくがんばったね🎉 あとは親に確認してもらおう👀'); }
+    else if(h&&isDone(h)){ toast('🎉 全部終わった！すごい！'); }
     else toast('✅ '+STEPS.find(x=>x.k===step).l+' 完了！');
   }catch(e){ toast('保存に失敗しました'); }
   shootId=null; shootStep=null; shootPhotos=[];
@@ -837,7 +860,7 @@ function openPhoto(url, urls){
 function buildGallery(){
   const track = document.getElementById('gallery-track');
   track.innerHTML = galleryUrls.map(function(u){
-    return '<div class="gallery-slide"><img src="'+esc(u)+'" alt="写真"></div>';
+    return '<div class="gallery-slide"><img src="'+esc(u)+'" alt="写真" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')"></div>';
   }).join('');
   // 対象インデックスにスクロール（即時）
   setTimeout(function(){
@@ -1171,6 +1194,55 @@ async function addKeisanWeek(){
     curTab=6; render();
     toast('計算 '+kai+'-1〜7 を登録しました！');
   }catch(e){ toast('登録に失敗しました: '+e.message); }
+}
+
+// ── 週間ビュー ステータス更新ポップアップ ──
+let weekPopupId=null;
+function openWeekPopup(id){
+  const h=hw.find(x=>x.id===id); if(!h) return;
+  weekPopupId=id;
+  const sub=SUBJS.find(s=>s.k===h.subject)||SUBJS[0];
+  document.getElementById('wp-title').innerHTML='<span class="subj '+sub.c+'" style="font-size:11px;margin-right:6px">'+sub.l+'</span>'+esc(h.title);
+  document.getElementById('wp-sub').textContent=(h.kai?'第'+h.kai+'回 ・ ':'')+dueLabel(h.due);
+  renderWeekPopupSteps(h);
+  // 写真
+  let photos='';
+  const purls=(h.photos||[]).map(function(p){return p.driveUrl;});
+  const pjson=esc(JSON.stringify(purls));
+  (h.photos||[]).forEach(function(ph){
+    photos+='<img class="thumb" src="'+esc(ph.driveUrl)+'" data-url="'+esc(ph.driveUrl)+'" data-urls="'+pjson+'" onclick="openPhoto(this.dataset.url,JSON.parse(this.dataset.urls))" alt="写真">';
+  });
+  document.getElementById('wp-photos').innerHTML=photos;
+  document.getElementById('week-popup-overlay').style.display='flex';
+}
+function renderWeekPopupSteps(h){
+  let steps='';
+  STEPS.forEach(function(st){
+    const d=h.steps[st.k];
+    let cls='step-btn'+(d?' done':'');
+    if(st.k==='parent') cls='step-btn parent-confirm'+(d?' done':'');
+    steps+='<button class="'+cls+'" data-id="'+h.id+'" data-step="'+st.k+'" onclick="tapStepWeek(this)">'
+      +'<span class="step-icon">'+(d?'✅':st.icon)+'</span>'
+      +'<span class="step-label">'+st.l+'</span></button>';
+  });
+  document.getElementById('wp-steps').innerHTML=steps;
+}
+async function tapStepWeek(btn){
+  const id=btn.dataset.id, step=btn.dataset.step;
+  const h=hw.find(x=>x.id===id); if(!h) return;
+  // 週間ポップアップでは自由にトグル（親と同じ挙動）
+  const before=h.steps[step];
+  h.steps[step]=!h.steps[step];
+  renderWeekPopupSteps(h);
+  try{
+    await api({action:'updateStep',id,step,value:String(h.steps[step])});
+    if(step==='redo' && !before && h.steps.redo){ fireConfetti(); toast('③解き直し完了！よくがんばったね🎉'); }
+  }catch(e){ toast('保存に失敗しました'); }
+}
+function closeWeekPopup(){
+  document.getElementById('week-popup-overlay').style.display='none';
+  weekPopupId=null;
+  render(); // 週間ビューを最新に
 }
 
 // ── 期日クイック編集 ──
