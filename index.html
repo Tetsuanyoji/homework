@@ -28,34 +28,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .tab-bar::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;padding:10px 14px;font-size:12px;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-kokugo{background:#f5f3ff}
+.tab-kokugo{background:#fef2f2}
 .tab-sansu{background:#eff6ff}
-.tab-rika{background:#f0fdf4}
-.tab-shakai{background:#fffbeb}
-.tab-keisan{background:#fdf2f8}
-.tab-kokugo.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.tab-rika{background:#fff7ed}
+.tab-shakai{background:#f0fdf4}
+.tab-keisan{background:#f0f9ff}
+.tab-kokugo.active{color:#dc2626;border-bottom-color:#dc2626}
 .tab-sansu.active{color:#2563eb;border-bottom-color:#2563eb}
-.tab-rika.active{color:#16a34a;border-bottom-color:#16a34a}
-.tab-shakai.active{color:#d97706;border-bottom-color:#d97706}
-.tab-keisan.active{color:#db2777;border-bottom-color:#db2777}
+.tab-rika.active{color:#ea580c;border-bottom-color:#ea580c}
+.tab-shakai.active{color:#16a34a;border-bottom-color:#16a34a}
+.tab-keisan.active{color:#0ea5e9;border-bottom-color:#0ea5e9}
 .badge{background:var(--danger);color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;margin-left:3px;font-weight:600}
 .content{padding:12px}
 /* カード */
 .hw-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;border-left-width:5px;border-left-style:solid}
-.hw-card.hc-kokugo{border-left-color:#7c3aed}
+.hw-card.hc-kokugo{border-left-color:#dc2626}
 .hw-card.hc-sansu{border-left-color:#2563eb}
-.hw-card.hc-rika{border-left-color:#16a34a}
-.hw-card.hc-shakai{border-left-color:#d97706}
-.hw-card.hc-keisan{border-left-color:#db2777}
+.hw-card.hc-rika{border-left-color:#ea580c}
+.hw-card.hc-shakai{border-left-color:#16a34a}
+.hw-card.hc-keisan{border-left-color:#0ea5e9}
 .hw-card.urgent{border-color:var(--danger-border);background:var(--danger-bg)}
 .hw-card.urgent{border-left-width:5px}
 .card-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:11px}
 .subj{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0;margin-top:1px}
-.s-kokugo{background:#ede9fe;color:#5b21b6}
-.s-sansu{background:#dbeafe;color:#1d4ed8}
-.s-rika{background:#dcfce7;color:#166534}
-.s-shakai{background:#fef3c7;color:#92400e}
-.s-keisan{background:#fce7f3;color:#9d174d}
+.s-kokugo{background:#dc2626;color:#fff}
+.s-sansu{background:#2563eb;color:#fff}
+.s-rika{background:#ea580c;color:#fff}
+.s-shakai{background:#16a34a;color:#fff}
+.s-keisan{background:#0ea5e9;color:#fff}
 .card-title-area{flex:1}
 .hw-name{font-size:14px;font-weight:600;line-height:1.3}
 .hw-kai{font-size:11px;color:var(--text3);margin-top:1px}
@@ -105,11 +105,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .subj-btn{padding:12px 10px;border:2.5px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;font-size:14px;font-weight:700;background:#f1f5f9;color:#94a3b8;transition:all .15s}
 .subj-btn.sel{color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(0,0,0,.18);transform:scale(1.02)}
-.subj-btn.sel.s-kokugo{background:#7c3aed}
+.subj-btn.sel.s-kokugo{background:#dc2626}
 .subj-btn.sel.s-sansu{background:#2563eb}
-.subj-btn.sel.s-rika{background:#16a34a}
-.subj-btn.sel.s-shakai{background:#d97706}
-.subj-btn.sel.s-keisan{background:#db2777}
+.subj-btn.sel.s-rika{background:#ea580c}
+.subj-btn.sel.s-shakai{background:#16a34a}
+.subj-btn.sel.s-keisan{background:#0ea5e9}
 .subj-btn.sel::after{content:" ✓";font-weight:900}
 .btn-row{display:flex;gap:8px;margin-top:18px}
 .btn{flex:1;padding:12px;border-radius:var(--radius);border:1px solid var(--border-strong);background:none;color:var(--text);font-size:15px;cursor:pointer;font-weight:600;font-family:inherit}
@@ -158,7 +158,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP"
 .week-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
 .week-item.wdone{opacity:.5}
 .week-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.wd-kokugo{background:#7c3aed}.wd-sansu{background:#2563eb}.wd-rika{background:#16a34a}.wd-shakai{background:#d97706}.wd-keisan{background:#db2777}
+.wd-kokugo{background:#dc2626}.wd-sansu{background:#2563eb}.wd-rika{background:#ea580c}.wd-shakai{background:#16a34a}.wd-keisan{background:#0ea5e9}
 .week-item-title{flex:1}
 .week-item-status{font-size:11px;color:var(--text3)}
 .week-empty-day{font-size:12px;color:var(--text3);padding:2px 0}
@@ -409,7 +409,7 @@ const STEPS = [
   {k:'parent',l:'④親確認',   icon:'👀', photo:false, parentOnly:true},
 ];
 
-const TABS = ['📅週間','全て','国語','算数','理科','社会','計算','完了'];
+const TABS = ['📅週間','全て','国語','算数','理科','社会','計算','👀確認待ち','完了'];
 
 let hw = [], curView = 'child', curTab = 0;
 let selS = '', selTS = '', selTmplIdx = -1;
@@ -547,25 +547,59 @@ function setView(v){
   document.getElementById('vbtn-parent').className='view-btn'+(v==='parent'?' active':'');
   render();
 }
-function setTab(i){ curTab=i; render(); }
+function setTab(i){
+  if(i<0||i>=TABS.length) return;
+  curTab=i; render();
+  // タブバーの該当タブを見えるところにスクロール
+  const tabsEl=document.getElementById('tabs');
+  const btn=tabsEl.children[i];
+  if(btn) btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── スワイプでタブ切り替え ──
+let touchStartX=0, touchStartY=0, touchActive=false;
+function initSwipe(){
+  const main=document.getElementById('main');
+  main.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1) return;
+    touchStartX=e.touches[0].clientX;
+    touchStartY=e.touches[0].clientY;
+    touchActive=true;
+  },{passive:true});
+  main.addEventListener('touchend',function(e){
+    if(!touchActive) return;
+    touchActive=false;
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    const dy=e.changedTouches[0].clientY-touchStartY;
+    // 横移動が縦移動より十分大きいときだけ反応
+    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.5) return;
+    // モーダルが開いているときは無効
+    if(document.querySelector('.overlay[style*="flex"]')) return;
+    if(dx<0) setTab(curTab+1); // 左スワイプ→次のタブ
+    else setTab(curTab-1);     // 右スワイプ→前のタブ
+  },{passive:true});
+}
 
 function filtered(){
-  // tab: 0=週間, 1=全て, 2-6=教科（計算含む）, 7=完了
-  const sm=['','','kokugo','sansu','rika','shakai','keisan',''];
+  // tab: 0=週間, 1=全て, 2-6=教科, 7=確認待ち, 8=完了
+  const sm=['','','kokugo','sansu','rika','shakai','keisan','',''];
   return hw.filter(h=>{
     if(curTab===1) return !isDone(h);
-    if(curTab===7) return isDone(h);
+    if(curTab===7) return h.steps.solve&&h.steps.check&&h.steps.redo&&!h.steps.parent; // 確認待ち
+    if(curTab===8) return isDone(h);
     return h.subject===sm[curTab]&&!isDone(h);
   });
 }
 
 function render(){
   document.getElementById('tabs').innerHTML=TABS.map((t,i)=>{
-    const sm=['','','kokugo','sansu','rika','shakai','keisan',''];
+    const sm=['','','kokugo','sansu','rika','shakai','keisan','',''];
     let b='';
     if(i===1){ const c=hw.filter(h=>!isDone(h)).length; if(c) b='<span class="badge">'+c+'</span>'; }
     else if(i>=2&&i<=6){ const c=incOf(sm[i]); if(c) b='<span class="badge">'+c+'</span>'; }
-    const subjCls=['','','tab-kokugo','tab-sansu','tab-rika','tab-shakai','tab-keisan',''][i]||'';
+    else if(i===7){ const c=hw.filter(h=>h.steps.solve&&h.steps.check&&h.steps.redo&&!h.steps.parent).length; if(c) b='<span class="badge" style="background:#d97706">'+c+'</span>'; }
+    const subjCls=['','','tab-kokugo','tab-sansu','tab-rika','tab-shakai','tab-keisan','',''][i]||'';
     return '<button class="tab '+subjCls+(curTab===i?' active':'')+'" onclick="setTab('+i+')">'+t+b+'</button>';
   }).join('');
 
@@ -582,7 +616,7 @@ function render(){
       +'</div>';
   }
   if(!list.length){
-    html+='<div class="empty"><div style="font-size:40px;margin-bottom:8px">🎉</div>'+(curTab===7?'完了した宿題はまだありません':'宿題は全部終わった！')+'</div>';
+    html+='<div class="empty"><div style="font-size:40px;margin-bottom:8px">🎉</div>'+(curTab===8?'完了した宿題はまだありません':curTab===7?'確認待ちの宿題はありません':'宿題は全部終わった！')+'</div>';
   } else {
     list.forEach(h=>{ html+=curView==='parent'?cardP(h):cardC(h); });
   }
@@ -1039,7 +1073,7 @@ async function submitEdit(){
 // ── 一括登録（曜日オフセット方式のパターン対応） ──
 const WD_OPTIONS=[['1','月'],['2','火'],['3','水'],['4','木'],['5','金'],['6','土'],['0','日']];
 
-function subjColor(k){ return {kokugo:'#7c3aed',sansu:'#2563eb',rika:'#16a34a',shakai:'#d97706',keisan:'#db2777'}[k]||'#2563eb'; }
+function subjColor(k){ return {kokugo:'#dc2626',sansu:'#2563eb',rika:'#ea580c',shakai:'#16a34a',keisan:'#0ea5e9'}[k]||'#2563eb'; }
 
 // パターンはGASの「パターン」シートに保存（JSON文字列）
 let patternCache=[];
@@ -1304,6 +1338,7 @@ function fireConfetti(){
   draw();
 }
 
+initSwipe();
 load();
 </script>
 </body>
